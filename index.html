@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: lukres-style flow. Floating header, preloader into a dark hero stage, giant masked name with a scroll-drawn ribbon, work cards, kuular-style education timeline, live exhibits, a night zone of ruled lists over outlined words, an electric-blue toolkit of playing cards, and a dark close. */
+/* Layout: lukres-style flow. Floating name-and-sections bar, preloader into a giant masked name with a scroll-drawn ribbon, work cards, kuular-style education timeline, a night zone of ruled lists over outlined words, live exhibits, an electric-blue toolkit of playing cards, and a dark close. */
 :root{
   --bg:#EEEFF5;
   --surface:#FFFFFF;
@@ -42,6 +42,10 @@
   --ease:cubic-bezier(.22,1,.36,1);
   --ease-io:cubic-bezier(.77,0,.18,1);
 }
+/* school crests: brand colours on light, monochrome on dark */
+:root{--crest-bg:#FFFFFF;--crest-line:var(--line);--crest-mute:var(--ink-2);--lg-w:#552D62;--lg-l1:#FAC314;--lg-l2:#143282}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--crest-bg:var(--panel);--crest-line:var(--panel-2);--crest-mute:var(--panel-mute);--lg-w:var(--panel-ink);--lg-l1:var(--panel-ink);--lg-l2:var(--panel-ink)}}
+:root[data-theme="dark"]{--crest-bg:var(--panel);--crest-line:var(--panel-2);--crest-mute:var(--panel-mute);--lg-w:var(--panel-ink);--lg-l1:var(--panel-ink);--lg-l2:var(--panel-ink)}
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0A0B0F;--surface:#14161C;--ink:#EDEEF4;--ink-2:#9A9DAB;--line:#242732;
@@ -88,31 +92,28 @@ html.js .rv:not(.in){opacity:0;transform:translateY(28px)}
 }
 
 /* ---------- preloader ---------- */
-#pre{position:fixed;inset:0;z-index:200;background:#000;color:#fff;display:grid;place-items:center;clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
-#pre.out{animation:preout 1s var(--ease-io) forwards}
-@keyframes preout{0%{clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}55%{clip-path:polygon(0 0,100% 0,100% 18%,0 62%)}100%{clip-path:polygon(0 0,100% 0,100% 0,0 0)}}
-.pre-bar{width:132px;height:26px;background:#2a2a2a;position:relative;overflow:hidden;transition:opacity .3s}
-.pre-bar i{position:absolute;inset:0;background:#fff;transform-origin:0 50%;transform:scaleX(0)}
-.pre-mark{position:absolute;opacity:0;transform:scale(.6) rotate(-8deg);transition:opacity .35s,transform .6s var(--ease)}
-#pre.mark .pre-bar{opacity:0}
-#pre.mark .pre-mark{opacity:1;transform:none}
-.pre-count{position:absolute;left:clamp(14px,2.4vw,32px);bottom:clamp(6px,1.4vw,18px);display:flex;font-size:clamp(64px,9vw,128px);line-height:1;letter-spacing:-.04em;font-weight:400;height:1em;overflow:hidden}
-.pre-count .dg{display:block;height:1em;overflow:hidden}
-.pre-count .dg span{display:block;transition:transform .45s var(--ease)}
-.pre-count .dg b{display:block;height:1em;font-weight:400}
-.pre-skip{position:absolute;right:clamp(14px,2.4vw,32px);bottom:clamp(16px,2vw,26px);font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#888;background:none;border:0;cursor:pointer;padding:8px}
+#pre{position:fixed;inset:0;z-index:200;background:#07080C;color:#ECEDF3;clip-path:inset(0 0 0 0);display:grid;place-items:center}
+#pre.out{animation:preout 1.05s var(--ease-io) .38s forwards}
+@keyframes preout{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 0 100% 0)}}
+.pre-top{position:absolute;left:clamp(16px,2.6vw,36px);right:clamp(16px,2.6vw,36px);top:clamp(18px,2.4vw,30px);display:flex;justify-content:space-between;gap:16px;font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8C8FA0;transition:opacity .5s}
+.pre-top span{display:inline-flex;align-items:center;gap:10px}
+.pre-sq{width:7px;height:7px;background:var(--accent,#2E3BFF);display:inline-block}
+.pre-mid{width:min(92vw,1180px);display:grid;gap:18px}
+.pre-word{display:flex;justify-content:space-between;font-weight:500;font-size:clamp(46px,11.6vw,176px);line-height:.86;letter-spacing:-.02em}
+.pre-word .lt{display:block;overflow:hidden;padding-bottom:.06em}
+.pre-word .lt span{display:block;transform:translateY(108%);transition:transform 1.05s var(--ease)}
+#pre.go .pre-word .lt span{transform:none}
+#pre.out .pre-word .lt span{transform:translateY(-108%);transition:transform .7s var(--ease-io)}
+.pre-line{height:1px;background:#262933;position:relative;overflow:hidden}
+.pre-line i{position:absolute;inset:0;background:#ECEDF3;transform-origin:0 50%;transform:scaleX(0)}
+.pre-meta{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8C8FA0}
+.pre-meta .mono{color:#ECEDF3;font-variant-numeric:tabular-nums}
+#pre.out .pre-line,#pre.out .pre-meta,#pre.out .pre-top{opacity:0;transition:opacity .35s}
+.pre-skip{position:absolute;right:clamp(16px,2.6vw,36px);bottom:clamp(16px,2.2vw,28px);font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8C8FA0;background:none;border:0;cursor:pointer;padding:8px}
 .pre-skip:hover{color:#fff}
+@media (max-width:520px){.pre-top span:last-child{display:none}.pre-mid{gap:14px}}
 
 /* ---------- header ---------- */
-.hdr{position:fixed;left:0;right:0;top:0;z-index:50;padding-top:env(safe-area-inset-top,0px);transition:background .4s,border-color .4s,color .4s;border-bottom:1px solid transparent;--hbg:var(--bg);--hink:var(--ink);color:var(--hink)}
-.hdr[data-tone="night"]{--hbg:var(--night);--hink:var(--night-ink)}
-.hdr[data-tone="blue"]{--hbg:var(--blue);--hink:#fff}
-.hdr.scrolled{background:color-mix(in srgb,var(--hbg) 90%,transparent);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);border-bottom-color:color-mix(in srgb,var(--hink) 10%,transparent)}
-.hdr .page{display:grid;grid-template-columns:minmax(150px,1fr) minmax(0,2fr) auto;align-items:center;gap:20px;min-height:72px}
-.wordmark{font-weight:500;font-size:18px;letter-spacing:.06em;text-decoration:none;text-transform:uppercase}
-.intro{font-size:clamp(15px,1.35vw,20px);line-height:1.2;margin:0;max-width:30ch;letter-spacing:-.01em;transition:opacity .45s var(--ease),transform .45s var(--ease)}
-.hdr.scrolled .intro{opacity:0;transform:translateY(-8px);pointer-events:none}
-.pills{display:flex;gap:8px;align-items:center}
 .pill{font:inherit;font-size:13px;display:inline-flex;align-items:center;gap:9px;height:38px;padding:0 16px;border-radius:999px;border:0;background:var(--surface);color:var(--ink);cursor:pointer;text-decoration:none;white-space:nowrap;letter-spacing:.01em;transition:background .25s,color .25s,transform .25s var(--ease)}
 .pill:hover{transform:translateY(-1px)}
 .pill.dark{background:var(--ink);color:var(--bg)}
@@ -120,19 +121,39 @@ html.js .rv:not(.in){opacity:0;transform:translateY(28px)}
 .pill .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
 .pill .dots{display:inline-flex;gap:3px}.pill .dots i{width:4px;height:4px;border-radius:50%;background:currentColor}
 .pill.icon{width:38px;padding:0;justify-content:center}
-.hdr[data-tone="night"] .pill{background:var(--night-2);color:var(--night-ink)}
-.hdr[data-tone="night"] .pill.dark{background:var(--night-ink);color:var(--night)}
-.hdr[data-tone="blue"] .pill{background:rgba(255,255,255,.14);color:#fff}
-.hdr[data-tone="blue"] .pill.dark{background:#fff;color:var(--blue)}
-.hdr .pills{opacity:1}
-html.js:not(.ready) .hdr .pill,html.js:not(.ready) .hdr .wordmark,html.js:not(.ready) .hdr .intro{opacity:0;transform:translateY(-10px)}
-.hdr .pill,.hdr .wordmark{transition:opacity .7s var(--ease),transform .7s var(--ease),background .25s,color .25s}
-.hdr .pill:nth-child(2){transition-delay:.06s}.hdr .pill:nth-child(3){transition-delay:.12s}
-.menu{position:absolute;right:var(--gut);top:68px;background:var(--surface);color:var(--ink);border-radius:16px;padding:8px;min-width:240px;box-shadow:0 24px 60px rgba(0,0,0,.18);display:grid}
-.menu a{text-decoration:none;padding:11px 12px;border-radius:10px;display:flex;justify-content:space-between;font-size:15px}
+/* ---------- header: kuular-style floating bar, always on ---------- */
+.hdr{position:fixed;left:0;right:0;top:0;z-index:50;padding:calc(env(safe-area-inset-top,0px) + 12px) var(--gut) 0;pointer-events:none;--hbg:var(--surface);--hink:var(--ink);--hmute:var(--ink-2);--hline:var(--line);--hpill:color-mix(in srgb,var(--ink) 7%,transparent)}
+.hdr[data-tone="night"]{--hbg:var(--night-2);--hink:var(--night-ink);--hmute:var(--night-mute);--hline:var(--night-line);--hpill:rgba(255,255,255,.09)}
+.hdr[data-tone="blue"]{--hbg:rgba(255,255,255,.12);--hink:#fff;--hmute:rgba(255,255,255,.72);--hline:rgba(255,255,255,.22);--hpill:rgba(255,255,255,.16)}
+.bar{pointer-events:auto;position:relative;display:flex;align-items:center;gap:20px;min-height:64px;padding:8px 10px 8px 26px;border-radius:22px;color:var(--hink);background:color-mix(in srgb,var(--hbg) 82%,transparent);border:1px solid color-mix(in srgb,var(--hline) 80%,transparent);backdrop-filter:blur(16px) saturate(1.3);-webkit-backdrop-filter:blur(16px) saturate(1.3);box-shadow:0 1px 0 rgba(255,255,255,.35) inset,0 10px 30px -14px rgba(10,12,30,.18);transition:background .5s var(--ease),border-color .5s var(--ease),color .5s var(--ease),box-shadow .5s var(--ease),transform .9s var(--ease),opacity .9s var(--ease)}
+.hdr.scrolled .bar{box-shadow:0 1px 0 rgba(255,255,255,.3) inset,0 18px 44px -18px rgba(10,12,30,.28)}
+.hdr[data-tone="night"] .bar,.hdr[data-tone="blue"] .bar{box-shadow:none}
+html.js:not(.ready) .bar{opacity:0;transform:translateY(-18px)}
+.brand{display:flex;align-items:baseline;gap:12px;text-decoration:none;white-space:nowrap;min-width:0}
+.brand .nm{font-size:21px;font-weight:450;letter-spacing:-.025em;line-height:1}
+.brand .role{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--hmute)}
+.nav{position:relative;display:flex;align-items:center;gap:2px;margin-left:auto}
+.nav a{position:relative;z-index:1;display:block;padding:12px 15px;border-radius:999px;text-decoration:none;font-family:var(--font-mono);font-size:13px;letter-spacing:.05em;color:var(--hink);opacity:.82;transition:opacity .3s}
+.nav a:hover,.nav a.on{opacity:1}
+.nav .rl{display:block;position:relative;overflow:hidden;height:1.25em;line-height:1.25em}
+.nav .rl span{display:block;transition:transform .55s var(--ease)}
+.nav a:hover .rl span{transform:translateY(-100%)}
+.nav .ind{position:absolute;top:50%;left:0;height:42px;width:0;margin-top:-21px;border-radius:999px;background:var(--hpill);opacity:0;transition:transform .6s var(--ease),width .6s var(--ease),opacity .4s,background .5s}
+.nav .ind.on{opacity:1}
+.hdr .pills{display:flex;gap:6px;align-items:center}
+.hdr .pill{height:40px;background:var(--hpill);color:var(--hink)}
+.hdr .pill.icon{width:40px}
+.menu-btn{display:none}
+.menu{position:absolute;right:0;top:calc(100% + 10px);background:var(--surface);color:var(--ink);border-radius:18px;padding:8px;min-width:240px;box-shadow:0 24px 60px rgba(0,0,0,.18);display:grid;border:1px solid var(--line)}
+.menu[hidden]{display:none}
+.menu a{text-decoration:none;padding:12px 12px;border-radius:10px;display:flex;justify-content:space-between;font-size:15px}
 .menu a span{font-family:var(--font-mono);font-size:11px;color:var(--ink-2)}
 .menu a:hover{background:var(--bg)}
-@media (max-width:860px){.hdr .page{grid-template-columns:1fr auto}.intro{display:none}.pill.hide-sm{display:none}}
+@media (max-width:1240px){.nav a{padding:12px 11px;font-size:12px;letter-spacing:.03em}.brand .role{display:none}}
+@media (max-width:1020px){.bar{flex-wrap:wrap;row-gap:4px;padding:8px 8px 6px 20px}.hdr .pills{margin-left:auto}.brand .role{display:inline}
+  .nav{order:3;flex:1 0 100%;margin:0 0 0 -12px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}
+  .nav::-webkit-scrollbar{display:none}.nav a{flex:none;padding:10px 12px}.nav .ind{height:38px;margin-top:-19px}}
+@media (max-width:520px){.hdr{padding-top:calc(env(safe-area-inset-top,0px) + 8px)}.bar{min-height:56px;padding:6px 6px 4px 18px;border-radius:18px;gap:4px 10px}.brand .nm{font-size:18px}.brand .role{display:none}.hdr .pill{height:38px}}
 
 main{padding-top:calc(72px + env(safe-area-inset-top,0px))}
 
@@ -153,7 +174,7 @@ html.js:not(.ready) .stage{transform:scale(.94);border-radius:40px}
 @media (max-width:640px){.stage .hud .t2{display:none}}
 
 /* ---------- name + about ---------- */
-.who{position:relative;padding-block:clamp(90px,12vw,190px) clamp(70px,9vw,140px)}
+.who{position:relative;padding-block:clamp(140px,15vw,230px) clamp(70px,9vw,140px)}
 .ribbon{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible}
 .ribbon path{fill:none;stroke:url(#rg);stroke-linecap:round}
 @media (max-width:860px){.ribbon{display:none}}
@@ -236,10 +257,10 @@ html.js .route:not(.in) .rl{transform:scaleX(0)}
 .edu-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
 .edu-item{display:grid;grid-template-columns:150px 120px minmax(0,1fr) minmax(160px,240px);gap:clamp(16px,2.4vw,40px);padding-block:clamp(26px,3vw,44px);border-bottom:1px solid var(--line);align-items:start}
 .edu-item .yrs{font-family:var(--font-mono);font-size:13px;color:var(--ink-2);padding-top:10px}
-.crest{width:100%;max-width:120px;aspect-ratio:1;border-radius:18px;background:var(--panel);color:var(--panel-ink);display:grid;place-items:center;position:relative;overflow:hidden}
+.crest{width:100%;max-width:120px;aspect-ratio:1;border-radius:18px;background:var(--crest-bg);color:var(--lg-w);transition:background .6s var(--ease),box-shadow .6s var(--ease);display:grid;place-items:center;position:relative;overflow:hidden}
 .crest b{font-weight:400;font-size:52px;letter-spacing:-.04em;line-height:1}
-.crest small{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--panel-mute)}
-.crest::before{content:"";position:absolute;inset:8px;border:1px solid var(--panel-2);border-radius:12px}
+.crest small{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--crest-mute)}
+.crest::before{content:"";position:absolute;inset:8px;border:1px solid var(--crest-line);border-radius:12px}
 .edu-body h3{font-size:clamp(28px,3vw,46px);font-weight:400;letter-spacing:-.03em;line-height:1.02;margin:0 0 8px}
 .edu-body .cred{margin:0 0 14px;color:var(--ink-2)}
 .edu-body ul{margin:0;padding:0;list-style:none}
@@ -304,7 +325,7 @@ details.method p{margin:6px 0;max-width:66ch}
 @media (max-width:1000px){.exs{grid-template-columns:1fr}}
 
 /* ---------- night zone ---------- */
-.night{--bg-z:var(--night);--ink:var(--night-ink);--ink-2:var(--night-mute);--line:var(--night-line);--surface:var(--night-2);--accent:#7D88FF;--accent-ink:#07080C;color:var(--ink);position:relative;margin-top:clamp(80px,10vw,160px);padding-top:34vh;padding-bottom:clamp(60px,8vw,120px);background:linear-gradient(to bottom,var(--bg-prev,var(--bg-light)) 0,var(--night) 30vh,var(--night) 100%);overflow:hidden}
+.night{--bg-z:var(--night);--ink:var(--night-ink);--ink-2:var(--night-mute);--line:var(--night-line);--surface:var(--night-2);--accent:#7D88FF;--accent-ink:#07080C;color:var(--ink);position:relative;margin-top:clamp(80px,10vw,160px);padding-top:34vh;padding-bottom:36vh;background:linear-gradient(to bottom,var(--bg-light) 0,var(--night) 30vh,var(--night) calc(100% - 30vh),var(--bg-light) 100%);overflow:hidden;overflow:clip}
 :root{--bg-light:var(--bg)}
 .night .page{position:relative;z-index:1}
 .ghost{position:absolute;left:0;right:0;top:20vh;z-index:0;pointer-events:none;display:grid;gap:2vw}
@@ -334,7 +355,7 @@ a.r:hover .o{text-decoration:underline;text-underline-offset:3px}
 @media (max-width:980px){.blk{grid-template-columns:1fr}.r{grid-template-columns:minmax(0,1fr) auto}.r .t{grid-column:1 / -1}.r .o,.r .evs{grid-column:1 / -1;text-align:left}.r .evs{flex-direction:row;align-items:center;gap:16px}}
 
 /* ---------- blue zone: toolkit cards ---------- */
-.blue{--ink:#FFFFFF;--ink-2:rgba(255,255,255,.74);--line:rgba(255,255,255,.24);--accent:#FFFFFF;--accent-ink:var(--blue);color:#fff;position:relative;padding-top:32vh;background:linear-gradient(to bottom,var(--night) 0,var(--blue) 30vh,var(--blue) 100%)}
+.blue{--ink:#FFFFFF;--ink-2:rgba(255,255,255,.74);--line:rgba(255,255,255,.24);--accent:#FFFFFF;--accent-ink:var(--blue);color:#fff;position:relative;padding-top:32vh;margin-top:clamp(80px,10vw,160px);background:linear-gradient(to bottom,var(--bg-light) 0,var(--blue) 30vh,var(--blue) 100%)}
 .tk-head{display:grid;grid-template-columns:minmax(0,8fr) minmax(0,4fr);gap:var(--gut);align-items:start}
 .tk-head h2{font-size:clamp(60px,11vw,190px);line-height:.88;letter-spacing:-.05em;font-weight:400;margin:0;text-transform:uppercase}
 .tk-head h2 .ind > span{padding-left:1.4em}
@@ -386,7 +407,8 @@ a.r:hover .o{text-decoration:underline;text-underline-offset:3px}
 .close .pill:hover{background:var(--accent);color:var(--accent-ink)}
 .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding-block:50px 40px;font-family:var(--font-mono);font-size:11px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em}
 @media (max-width:860px){.close .grid{grid-template-columns:1fr}}
-.stage,.media,.crest{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--panel-ink) 7%,transparent)}
+.stage,.media{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--panel-ink) 7%,transparent)}
+.crest{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--crest-line) 70%,transparent),0 14px 34px -22px rgba(20,24,60,.35)}
 /* foundation signature, drawn like orchenko.fund */
 .sig path{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1 2;stroke-dashoffset:1.06}
 html:not(.js) .sig path{stroke-dashoffset:0}
@@ -395,6 +417,141 @@ html:not(.js) .sig path{stroke-dashoffset:0}
 .card.in .sig .s1{--dl:.9s}.card.in .sig .s2{--dl:2.78s}.card.in .sig .s3{--dl:3.27s}.card.in .sig .s4{--dl:4.09s}
 @keyframes sign-draw{0%{stroke-dashoffset:1.06}100%{stroke-dashoffset:0}}
 @media (prefers-reduced-motion:reduce){.sig path{animation:none!important;stroke-dashoffset:0}}
+/* school marks in the education crests */
+.crest svg{position:relative;z-index:1;width:auto;height:46%;margin-top:-12%;display:block;transition:opacity 1s var(--ease) .25s,transform 1.2s var(--ease) .25s}
+.crest .lg-letovo{height:42%}.crest .lg-warwick{height:54%;margin-top:-14%}
+html.js .edu-item:not(.in) .crest svg{opacity:0;transform:translateY(12px) scale(.92)}
+.edu-item:hover .crest svg{transform:scale(1.04)}
+@media (prefers-reduced-motion:reduce){.crest svg{transition:none}}
+
+/* ---------- v9: education motion, metric stack, crest colours, ribbon life, wide card ---------- */
+.crest .lg-letovo .lt-a{fill:var(--lg-l1)}.crest .lg-letovo path:not(.lt-a){fill:var(--lg-l2)}
+.crest .lg-warwick path{fill:var(--lg-w)}
+.crest svg path{transition:fill .6s var(--ease)}
+.crest::after{content:"";position:absolute;inset:-40%;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);transform:translateX(-70%);pointer-events:none;z-index:2;mix-blend-mode:soft-light}
+.edu-item.in .crest::after{animation:crest-glint 1.6s var(--ease) .7s both}
+.edu-item:hover .crest::after{animation:crest-glint 1.2s var(--ease) both}
+@keyframes crest-glint{from{transform:translateX(-70%)}to{transform:translateX(70%)}}
+.edu-list{position:relative;border-top:0}
+.edu-list::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--ink);transform-origin:0 50%;transition:transform 1.6s var(--ease-io)}
+html.js .edu-list:not(.in)::before{transform:scaleX(0)}
+.edu-item{position:relative;border-bottom:0}
+.edu-item::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--line);transform-origin:0 50%;transition:transform 1.4s var(--ease-io) .3s}
+html.js .edu-item:not(.in)::after{transform:scaleX(0)}
+.edu-body h3,.edu-body .cred,.edu-body li,.metric.stack > div,.edu-item .yrs{transition:opacity .9s var(--ease),transform 1.1s var(--ease)}
+html.js .edu-item:not(.in) .edu-body h3,html.js .edu-item:not(.in) .edu-body .cred,html.js .edu-item:not(.in) .edu-body li,html.js .edu-item:not(.in) .metric.stack > div{opacity:0;transform:translateY(18px)}
+.edu-body h3{transition-delay:.12s}.edu-body .cred{transition-delay:.2s}
+.edu-body li:nth-child(1){transition-delay:.3s}.edu-body li:nth-child(2){transition-delay:.38s}.edu-body li:nth-child(3){transition-delay:.46s}
+.edu-body li{position:relative}
+.edu-body li::before{content:"";position:absolute;left:0;top:-1px;height:1px;width:28px;background:var(--accent);transform:scaleX(0);transform-origin:0 50%;transition:transform .5s var(--ease)}
+.edu-body li:hover::before{transform:scaleX(1)}
+.metric.stack{display:grid;gap:0;align-content:start}
+.metric.stack > div{padding:12px 0;border-top:1px solid var(--line)}
+.metric.stack > div:first-child{border-top:0;padding-top:0}
+.metric.stack > div:nth-child(1){transition-delay:.25s}.metric.stack > div:nth-child(2){transition-delay:.4s}.metric.stack > div:nth-child(3){transition-delay:.55s}
+.metric.stack b{font-size:clamp(34px,3.6vw,58px);font-variant-numeric:tabular-nums}
+.metric.stack > div:first-child b{font-size:clamp(40px,4.6vw,76px)}
+.metric.stack b small{font-size:.42em;letter-spacing:-.01em;color:var(--ink-2);margin-left:2px}
+.metric.stack span{margin-top:6px}
+@media (max-width:980px){.metric.stack{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;text-align:left}.metric.stack > div,.metric.stack > div:first-child{border-top:1px solid var(--line);padding:12px 0 0}.metric.stack > div:first-child b,.metric.stack b{font-size:clamp(28px,7vw,44px)}.metric.stack:has(> div:only-child){grid-template-columns:1fr}}
+.route .rl .jet{position:absolute;top:-3.5px;left:0;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent);opacity:0}
+.route.in .rl .jet{animation:jet 4.2s var(--ease-io) 1.6s infinite}
+@keyframes jet{0%{left:0;opacity:0}8%{opacity:1}82%{opacity:1}92%,100%{left:calc(100% - 8px);opacity:0}}
+.edu-top h2 .ml:nth-child(2) > span{transition-delay:.12s}
+#ribbonGlow{fill:none;stroke:#fff;stroke-linecap:round;opacity:0;transition:opacity .8s;filter:blur(2px)}
+.work .card.wide{grid-column:1 / -1}
+.work .card.wide .media{aspect-ratio:21/8}
+.work .card.wide .sum{max-width:60ch}
+@media (max-width:860px){.work .card.wide .media{aspect-ratio:16/10}}
+@media (prefers-reduced-motion:reduce){.route .rl .jet,.crest::after{animation:none!important;display:none}}
+.metric b span{display:inline;margin:0;font:inherit;letter-spacing:inherit;text-transform:none;color:inherit}
+/* IB year-1 subjects */
+.edu-body li.ib{display:grid;gap:10px;padding-block:14px}
+.ib-h{color:var(--ink)}
+.ib-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.ib-row b{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.1em;color:var(--ink-2);width:30px}
+.chip{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.03em;padding:6px 11px;border-radius:999px;border:1px solid var(--line);color:var(--ink);background:color-mix(in srgb,var(--surface) 70%,transparent);transition:opacity .7s var(--ease),transform .8s var(--ease),border-color .3s,background .3s}
+.chip.hl{border-color:color-mix(in srgb,var(--accent) 45%,var(--line));background:color-mix(in srgb,var(--accent) 9%,transparent)}
+.chip:hover{border-color:var(--accent)}
+.ib-note{font-size:13.5px;color:var(--ink-2);line-height:1.45;padding-left:10px;border-left:2px solid var(--accent)}
+html.js .edu-item:not(.in) .chip{opacity:0;transform:translateY(8px) scale(.96)}
+.ib-row .chip:nth-of-type(1){transition-delay:.5s}.ib-row .chip:nth-of-type(2){transition-delay:.56s}.ib-row .chip:nth-of-type(3){transition-delay:.62s}.ib-row .chip:nth-of-type(4){transition-delay:.68s}
+.ib-row + .ib-row .chip:nth-of-type(1){transition-delay:.76s}.ib-row + .ib-row .chip:nth-of-type(2){transition-delay:.82s}
+.edu-body li:nth-child(4){transition-delay:.54s}
+@media (max-width:520px){.ib-row b{width:100%}}
+/* ---------- v11: experience storyline ---------- */
+.xp-blk{align-items:start}
+.xp-side{position:sticky;top:120px;align-self:start}
+.xp-intro{margin:18px 0 0;max-width:30ch;color:var(--ink-2);font-size:16px;line-height:1.45}
+.xp-now{margin-top:clamp(28px,4vw,56px)}
+.xp-yr{overflow:hidden;font-size:clamp(76px,9.4vw,156px);font-weight:300;letter-spacing:-.055em;line-height:.9;height:.92em}
+.xp-yr span{display:block}
+.xp-yr span.flip{animation:xp-flip .75s var(--ease) both}
+@keyframes xp-flip{from{transform:translateY(70%);opacity:0;filter:blur(6px)}to{transform:none;opacity:1;filter:none}}
+.xp-step{margin-top:14px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+.xp-step #xpTh{color:var(--accent)}
+.xp-bar{margin-top:14px;height:1px;background:var(--line);max-width:260px;position:relative;overflow:hidden}
+.xp-bar i{position:absolute;inset:0;background:var(--accent);transform-origin:0 50%;transform:scaleX(0)}
+.xp-list{position:relative;padding-left:46px}
+.xp-rail{position:absolute;left:11px;top:30px;bottom:60px;width:1px;background:var(--line)}
+.xp-rail i{position:absolute;left:0;top:0;width:1px;height:100%;background:linear-gradient(to bottom,transparent,var(--accent) 12%,var(--accent));transform-origin:50% 0;transform:scaleY(0);box-shadow:0 0 12px var(--accent)}
+.xp-ol{list-style:none;margin:0;padding:0}
+.xp{position:relative;padding-bottom:clamp(26px,3vw,44px)}
+.xp-a{position:relative;display:grid;gap:9px;text-decoration:none;color:inherit;padding:22px 26px 24px;margin-left:-26px;border-radius:20px;border:1px solid transparent;transition:background .5s var(--ease),border-color .5s var(--ease),opacity .6s var(--ease)}
+.xp-a:hover{background:var(--surface);border-color:var(--line)}
+.xp-list.spy .xp:not(.cur) .xp-a{opacity:.38}
+.xp-list.spy .xp:not(.cur) .xp-a:hover{opacity:1}
+.xp-node{position:absolute;left:-46px;top:26px;width:23px;height:23px;display:grid;place-items:center;margin-left:26px}
+.xp-node i{width:11px;height:11px;border-radius:50%;background:var(--night);border:1.5px solid var(--ink-2);transition:background .5s,border-color .5s,box-shadow .6s,transform .6s var(--ease)}
+.xp.on .xp-node i{background:var(--accent);border-color:var(--accent)}
+.xp.cur .xp-node i{transform:scale(1.25);box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 22%,transparent),0 0 24px var(--accent)}
+.xp.cur .xp-node::after{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid var(--accent);animation:xp-ping 2.2s var(--ease) infinite}
+@keyframes xp-ping{from{transform:scale(.6);opacity:.9}to{transform:scale(2.4);opacity:0}}
+.xp-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;letter-spacing:.06em;color:var(--ink-2)}
+.xp-n{color:var(--ink)}
+.xp-th{margin-left:auto;padding:4px 10px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 55%,transparent);color:var(--accent);text-transform:uppercase;letter-spacing:.1em;font-size:10.5px}
+.xp-org{font-size:clamp(28px,2.8vw,44px);letter-spacing:-.035em;line-height:1.02;margin-top:4px}
+.xp-role{font-size:14.5px;color:var(--ink-2)}
+.xp-beat{font-size:clamp(17px,1.4vw,20px);color:var(--ink);letter-spacing:-.01em;margin-top:6px;display:flex;align-items:center;gap:10px}
+.xp-beat::before{content:"";width:18px;height:1px;background:var(--accent);flex:none}
+.xp-txt{font-size:15px;line-height:1.55;color:var(--ink-2);max-width:60ch}
+.xp-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.xc{font-family:var(--font-mono);font-size:12px;letter-spacing:.02em;color:var(--ink-2);padding:6px 12px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.xc b{color:var(--ink);font-weight:500;font-variant-numeric:tabular-nums}
+.xc em{font-style:normal;color:var(--ink)}
+.xp-go{margin-top:8px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.xp-go span{display:inline-block;transition:transform .45s var(--ease)}
+.xp-a:hover .xp-go span{transform:translateX(6px)}
+.xp-carry{margin:6px 0 0;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.04em;color:var(--ink-2);display:flex;align-items:center;gap:10px}
+.xp-carry::before{content:"↓";color:var(--accent);display:inline-block;animation:xp-bob 1.8s var(--ease-io) infinite}
+@keyframes xp-bob{0%,100%{transform:translateY(-2px)}50%{transform:translateY(3px)}}
+/* entry choreography */
+.xp-top,.xp-role,.xp-beat,.xp-txt,.xp-go,.xp-carry,.xc{transition:opacity .8s var(--ease),transform 1s var(--ease)}
+.xp-org{transition:clip-path 1.1s var(--ease),transform 1.1s var(--ease)}
+html.js .xp:not(.in) .xp-org{clip-path:inset(0 0 100% 0);transform:translateY(24px)}
+.xp-org{clip-path:inset(0 0 -10% 0)}
+html.js .xp:not(.in) .xp-top,html.js .xp:not(.in) .xp-role,html.js .xp:not(.in) .xp-beat,html.js .xp:not(.in) .xp-txt,html.js .xp:not(.in) .xp-go,html.js .xp:not(.in) .xp-carry{opacity:0;transform:translateY(16px)}
+html.js .xp:not(.in) .xc{opacity:0;transform:translateY(10px) scale(.94)}
+html.js .xp:not(.in) .xp-node i{transform:scale(0)}
+.xp-org{transition-delay:.08s}.xp-role{transition-delay:.18s}.xp-beat{transition-delay:.26s}.xp-txt{transition-delay:.34s}
+.xc:nth-child(1){transition-delay:.42s}.xc:nth-child(2){transition-delay:.5s}.xc:nth-child(3){transition-delay:.58s}
+.xp-go{transition-delay:.62s}.xp-carry{transition-delay:.8s}
+@media (max-width:980px){.xp-side{position:static}.xp-now{display:none}.xp-list{padding-left:34px}.xp-rail{left:7px}.xp-node{left:-34px;margin-left:16px;top:24px;width:15px}.xp-a{padding:16px 16px 18px;margin-left:-16px}.xp-list.spy .xp:not(.cur) .xp-a{opacity:.6}.xp-th{margin-left:0}}
+@media (prefers-reduced-motion:reduce){.xp-carry::before,.xp.cur .xp-node::after{animation:none}}
+
+/* ---------- v11: cursor ---------- */
+html.has-cur,html.has-cur *{cursor:none!important}
+html.has-cur input[type=range]{cursor:none!important}
+.cur-dot,.cur-ring{position:fixed;left:0;top:0;z-index:300;pointer-events:none;border-radius:50%;mix-blend-mode:difference;will-change:transform}
+.cur-dot{width:6px;height:6px;margin:-3px 0 0 -3px;background:#fff;transition:opacity .25s,width .3s var(--ease),height .3s var(--ease),margin .3s var(--ease)}
+.cur-ring{width:38px;height:38px;margin:-19px 0 0 -19px;border:1px solid #fff;transition:width .45s var(--ease),height .45s var(--ease),margin .45s var(--ease),background .35s,opacity .3s,border-color .35s}
+html.cur-hover .cur-ring{width:64px;height:64px;margin:-32px 0 0 -32px;background:#fff;border-color:transparent}
+html.cur-hover .cur-dot{opacity:0}
+html.cur-down .cur-ring{width:26px;height:26px;margin:-13px 0 0 -13px}
+html.cur-text .cur-ring{width:4px;height:30px;margin:-15px 0 0 -2px;border-radius:2px;background:#fff;border-color:transparent}
+html.cur-card .cur-ring,html.cur-card .cur-dot,html.cur-out .cur-ring,html.cur-out .cur-dot{opacity:0}
+.cur-glow{position:fixed;left:0;top:0;z-index:0;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,color-mix(in srgb,var(--accent) 16%,transparent) 0,transparent 62%);opacity:.0;transition:opacity .6s;will-change:transform}
+html.has-cur .cur-glow{opacity:1}
 
 
 /* ---------- case overlay ---------- */
@@ -626,42 +783,44 @@ html.case-open{overflow:hidden}
 </head>
 <body>
 <div id="pre" aria-hidden="true">
-  <div class="pre-bar"><i id="preFill"></i></div>
-  <svg class="pre-mark" width="84" height="96" viewBox="0 0 84 96" aria-hidden="true"><polygon points="0,0 22,0 46,72 46,96 34,96" fill="#fff"/><polygon points="62,0 84,0 58,78 46,72" fill="#fff"/><rect x="50" y="84" width="34" height="12" fill="#fff"/></svg>
-  <div class="pre-count" id="preCount"></div>
-  <button class="pre-skip" id="preSkip" type="button" tabindex="-1">Skip</button>
+  <div class="pre-top"><span><i class="pre-sq"></i>Portfolio · 2026</span><span>Economics · University of Warwick</span></div>
+  <div class="pre-mid">
+    <div class="pre-word" id="preWord" data-word="LISHANKOV"></div>
+    <div class="pre-line"><i id="preFill"></i></div>
+    <div class="pre-meta"><span>Vladimir Lishankov</span><span class="mono" id="preCount">000</span></div>
+  </div>
+  <button class="pre-skip" id="preSkip" type="button" tabindex="-1">Skip intro</button>
 </div>
 
 <header class="hdr" id="hdr">
-  <div class="page">
-    <a class="wordmark" href="#top">Lishankov</a>
-    <p class="intro">I'm Vladimir. I put prices on things people usually leave to intuition.</p>
+  <div class="bar">
+    <a class="brand" href="#top" aria-label="Vladimir Lishankov, back to top"><span class="nm">Vladimir Lishankov</span><span class="role">Economics · Warwick</span></a>
+    <nav class="nav" id="nav" aria-label="Sections"><i class="ind" id="navInd" aria-hidden="true"></i>
+      <a href="#work" data-spy="work"><span class="rl"><span>Work</span><span aria-hidden="true">Work</span></span></a>
+      <a href="#education" data-spy="education"><span class="rl"><span>Education</span><span aria-hidden="true">Education</span></span></a>
+      <a href="#recognition" data-spy="recognition"><span class="rl"><span>Recognition</span><span aria-hidden="true">Recognition</span></span></a>
+      <a href="#experience" data-spy="experience"><span class="rl"><span>Experience</span><span aria-hidden="true">Experience</span></span></a>
+      <a href="#exhibits" data-spy="exhibits"><span class="rl"><span>Exhibits</span><span aria-hidden="true">Exhibits</span></span></a>
+      <a href="#toolkit" data-spy="toolkit"><span class="rl"><span>Toolkit</span><span aria-hidden="true">Toolkit</span></span></a>
+      <a href="#contact" data-spy="contact"><span class="rl"><span>Contact</span><span aria-hidden="true">Contact</span></span></a>
+    </nav>
     <div class="pills">
       <button class="pill icon" id="themeBtn" type="button" aria-label="Switch colour theme" title="Theme"><span class="mono" id="themeGlyph">◐</span></button>
-      <a class="pill dark hide-sm" href="#contact">Let's talk <span class="dot"></span></a>
-      <button class="pill" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu">Menu <span class="dots" aria-hidden="true"><i></i><i></i></span></button>
+      <button class="pill menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="menu">Menu <span class="dots" aria-hidden="true"><i></i><i></i></span></button>
     </div>
     <nav class="menu" id="menu" hidden aria-label="Sections">
-      <a href="#work">Work <span>06</span></a>
+      <a href="#work">Work <span>01</span></a>
       <a href="#education">Education <span>02</span></a>
-      <a href="#exhibits">Exhibits <span>02</span></a>
-      <a href="#record">Record <span>12</span></a>
-      <a href="#receipts">Receipts <span>11</span></a>
-      <a href="#toolkit">Toolkit <span>04</span></a>
-      <a href="#contact">Contact <span>@</span></a>
+      <a href="#recognition">Recognition <span>03</span></a>
+      <a href="#experience">Experience <span>04</span></a>
+      <a href="#exhibits">Exhibits <span>05</span></a>
+      <a href="#toolkit">Toolkit <span>06</span></a>
+      <a href="#contact">Contact <span>07</span></a>
     </nav>
   </div>
 </header>
 
 <main id="top">
-  <section class="page" aria-label="Live animation: a Galton board with fat tails">
-    <div class="stage" id="stage">
-      <canvas id="galton" aria-hidden="true"></canvas>
-      <div class="hud"><span>Fig. 0 · Galton board<span class="t2">, fat-tailed</span></span><span>n = <b id="g-n">0</b> · tails <b id="g-t">0</b></span></div>
-      <div class="legend"><span><i class="w"></i>Coin-flip path</span><span><i class="b"></i>Tail event</span></div>
-    </div>
-    <div class="xrow" aria-hidden="true"><span>+</span><span class="scroll" data-scramble>Scroll to explore</span><span>+</span></div>
-  </section>
 
   <section class="who" id="about" aria-labelledby="name">
     <svg class="ribbon" id="ribbon" viewBox="0 0 1440 1200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
@@ -691,7 +850,7 @@ html.case-open{overflow:hidden}
   <div class="page">
     <div class="shead" id="work">
       <h2><span class="ml" data-reveal><span>Selected Work</span></span></h2>
-      <div class="side rv" data-reveal><span class="count">06</span><p>Internships, a fund, a pipeline, research and case work. Open any card for the full case.</p></div>
+      <div class="side rv" data-reveal><span class="count">05</span><p>Internships, a fund, a pipeline and research. Open any card for the full case.</p></div>
     </div>
 
     <div class="work">
@@ -747,7 +906,6 @@ html.case-open{overflow:hidden}
         <div class="media"><div class="art">
           <svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
             <text class="a-big" x="24" y="66">750k</text><text class="a-txt" x="24" y="86">RUB PER TEAM, MAX</text>
-            <g class="sig" transform="translate(196 34) scale(0.165) translate(-64 -190)" aria-hidden="true"><path class="s1" pathLength="1" stroke-width="16" d="M478 210 C332 204 143 232 94 278 C67 304 78 324 150 333 C239 347 420 337 567 340 C690 343 821 310 820 274 C817 231 646 207 478 210"/><path class="s2" pathLength="1" stroke-width="19" d="M478 248 C446 306 394 405 365 460"/><path class="s3" pathLength="1" stroke-width="18" d="M240 338 C222 371 222 405 251 418 C292 440 358 393 388 354 C414 319 424 282 392 265 C350 238 286 273 240 338"/><path class="s4" pathLength="1" stroke-width="17" d="M447 338 C469 313 498 303 518 320 C533 333 530 350 549 362 C575 382 631 367 681 357 C741 342 799 337 835 357"/></g>
             <g id="tranches"></g>
           </svg></div>
           <span class="tagline">50k · 50k · 75k in the sprint · 575k to scale</span>
@@ -758,7 +916,7 @@ html.case-open{overflow:hidden}
         <span class="go">Read the case →</span>
       </a>
 
-      <a class="card" href="#case-brics" data-case="brics" data-reveal>
+      <a class="card wide" href="#case-brics" data-case="brics" data-reveal>
         <div class="media"><div class="art">
           <svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
             <text class="a-txt" x="24" y="40">ESG EDUCATION · 5 SYSTEMS COMPARED</text>
@@ -769,21 +927,6 @@ html.case-open{overflow:hidden}
         <p class="meta" data-scramble>Project manager &amp; lead researcher • team of 7 • 2024–25</p>
         <h3><span class="arr">→</span>SPbU · BRICS</h3>
         <p class="sum">Led seven students comparing ESG education across the BRICS countries, with St Petersburg State University. RBC Trends ran our findings.</p>
-        <span class="go">Read the case →</span>
-      </a>
-
-      <a class="card" href="#case-alfa" data-case="alfa" data-reveal>
-        <div class="media"><div class="art">
-          <svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-            <text class="a-txt" x="24" y="40">LOCATION SCORE, 0–100</text>
-            <rect x="24" y="58" width="290" height="30" rx="5" class="a-hot"/><text class="a-num" x="324" y="78">88</text><text class="a-txt" x="24" y="104">BAUMAN UNIVERSITY AREA</text>
-            <rect x="24" y="118" width="280" height="30" rx="5" class="a-cell"/><text class="a-num" x="314" y="138">85</text><text class="a-txt" x="24" y="164">ARTPLAY</text>
-            <text class="a-txt" x="24" y="196">S = .25A + .20B + .15C + .15D + .10E + .10F + .05G</text>
-          </svg></div>
-        </div>
-        <p class="meta" data-scramble>Case competition • team of 4 • Alfa-Bank brief</p>
-        <h3><span class="arr">→</span>Alfa Phygital Hub</h3>
-        <p class="sum">A branch concept for Alfa-Bank: a learning and start-up hub. Pilot sites picked with a seven-factor scoring model; projected payback in 28 months.</p>
         <span class="go">Read the case →</span>
       </a>
     </div>
@@ -803,26 +946,27 @@ html.case-open{overflow:hidden}
           <span class="cap">Education · <span class="mono">02</span></span>
           <h2 id="edu-h"><span class="ml" data-reveal><span>Two schools,</span></span><span class="ml" data-reveal><span>one direction.</span></span></h2>
         </div>
-        <p class="route" data-reveal><span>Moscow</span><span class="rl" aria-hidden="true"></span><span>Coventry</span></p>
+        <p class="route" data-reveal><span>Moscow</span><span class="rl" aria-hidden="true"><i class="jet"></i></span><span>Coventry</span></p>
       </div>
-      <ol class="edu-list">
+      <ol class="edu-list" data-reveal>
         <li class="edu-item rv" data-reveal>
-          <span class="yrs">2022 – 2026</span>
-          <div class="crest" aria-hidden="true"><b>L</b><small>Moscow</small></div>
+          <span class="yrs" data-scramble>2022 – 2026</span>
+          <div class="crest" aria-hidden="true"><svg viewBox="7 3 34 42" class="lg-letovo" role="img" aria-label="Letovo School emblem"><path class="lt-a" fill="currentColor" d="M11,23.1l13-7.51,15.51,9v1.79L24,17.38,11,24.89Zm.07,5.49L24,21.12l15.51,9V28.29L24,19.34l-13,7.5v.27c0,.78.07,1.48.07,1.48"/><path fill="currentColor" fill-rule="evenodd" d="M11,26.84h0v.27c0,.78.07,1.48.07,1.48a5.13,5.13,0,0,0,.37,1.89L24,23.22l15.51,9v2.88L24,44,12.51,36.85,15,35.4l9,5.72,13-7.51L24,26.1,10,34.19A13.78,13.78,0,0,1,8.5,28.45c0-.27,0-8.77,0-8.77L24,10.73h0l15.5,9h0v2.88L24,13.61,11,21.12ZM8.5,4V15.57L11,14.12V6.5H37v7.62l2.5,1.45V4Z"/></svg><small>Moscow</small></div>
           <div class="edu-body">
             <h3>Letovo School</h3>
-            <p class="cred">International A-Levels (Edexcel) · Russian State Diploma</p>
+            <p class="cred">International A-Levels (Edexcel) · IB Diploma, year 1 · Russian Attestat</p>
             <ul>
               <li>Mathematics A · Economics A · English Literature B</li>
-              <li>The full two-year A-Level programme in one year, after the IB was discontinued in Russia</li>
-              <li>Russian State Diploma 4.9 / 5.0 · SAT 1500 (98th percentile) · IELTS 8.0</li>
+              <li>The full two-year A-Level programme, completed in one year</li>
+              <li class="ib"><span class="ib-h">Before that, year 1 of the IB Diploma, until the programme was legally discontinued in Russia. The switch to A-Levels followed</span><span class="ib-row"><b>HL</b><span class="chip hl">Mathematics AA</span><span class="chip hl">Economics</span><span class="chip hl">Business Management</span><span class="chip hl">English A: Literature</span></span><span class="ib-row"><b>SL</b><span class="chip">Computer Science</span><span class="chip">Russian A: Literature</span></span><span class="ib-note">Four Higher Level subjects where most students take three, and literature studied in two languages. Both are rare combinations.</span></li>
+              <li>IELTS 8.0</li>
             </ul>
           </div>
-          <div class="metric"><b>A·A·B</b><span>A-Levels, in one year</span></div>
+          <div class="metric stack"><div><b data-scramble>A·A·B</b><span>A-Levels, in one year</span></div><div><b><span data-count="1500" data-plain>1500</span></b><span>SAT · 98th percentile</span></div><div><b><span data-count="4.9" data-dec="1">4.9</span><small>/5.0</small></b><span>Russian Attestat</span></div></div>
         </li>
         <li class="edu-item rv" data-reveal style="--d:.08s">
-          <span class="yrs">2026 – 2029</span>
-          <div class="crest" aria-hidden="true"><b>W</b><small>Coventry</small></div>
+          <span class="yrs" data-scramble>2026 – 2029</span>
+          <div class="crest" aria-hidden="true"><svg viewBox="0 0 463.15 655" class="lg-warwick" role="img" aria-label="University of Warwick crest"><path fill="currentColor" d="m104.13 323c0 2.6-1.4 5.3-1.4 5.3h-19.6s-3.1-2.5-3.1-5.4 0.3-3.4 0.5-4.6c-1-0.5-2.2-1.4-2.2-3v-4.4c0-1.2-1-4.7-2.2-8.4 0.9-2.2 6.4-8.3 6.4-12.6 1.9 0.6 5.2 1.4 9.8 1.5v11.1c0 2.2 4.1 6.1 4.1 9.3s7.8 6.6 7.8 11.2zm-24.4-103c5.4-2.4 10.7-2.8 15.9-2.7v-25.4c1.1-0.8 2.2-1.5 3.3-2.2v27.7c5.4 0 10.5 0 15.9 0.5v-28c1 0.7 2.1 1.4 3.1 2.1v26.1c4.4 0.4 8 0.8 10.4 1.1 1-3.4 3.2-6.1 5.6-8.5v-16.9l3.8-1.1v-10.3c-1.9-0.8-3.9-1.5-5.8-2.1v6.3l-2.7-0.8v-6.2c-1.6-0.4-3.3-0.7-4.9-0.9v6.1l-2.7-0.3v-6.1c-0.9 0-1.9-0.1-2.8-0.2v-3.5c-2.1-0.5-4.2-0.9-6.4-1.1v6.1l-2.7-0.4v-5.9c-1.9-0.1-3.8-0.1-5.7 0v5.9l-2.7 0.4v-6c-2 0.2-4 0.6-6 1.1v3.4c-1.1 0-2.1 0.1-3.2 0.2v6.1l-2.7 0.3v-6.1c-1.6 0.3-3.3 0.6-4.9 1v6.1l-2.7 0.8v-6.2c-1.8 0.6-3.6 1.2-5.4 2v10.3l3.7 1.1v26.2zm21.9 0.5c-18.3 0-20.9 24.7-20.9 33.8 2.6-1 6.6-2.2 11.7-2.2 8.2 0 12.5 2.1 25 2.1-0.7-11 1.9-24.8 8.4-32.4-4.8-0.6-15.6-1.4-24.3-1.4zm115.6 7.4 1.3 1.3c-4.4 7.4-13.3 10.8-21.7 11 1 2.1 1.3 4.5 0.7 7.1l-2 0.7s-6.7-5.3-11.4-5.3-6.4 4.8-11.5 8.1c-4.2 2.7-7.4 3.1-13.1 7-14.3 9.6-14.6 14.5-14.6 26.9v5.7c0 3.6-1.1 7.2-2.3 10.7 0 0.2-0.1 0.4-0.2 0.6-1 2.9-2.3 7.1-2.3 9.9s0.6 5.1 2.2 6.7c1.2 1.3 2.5 2.5 2.5 4.5s-1.5 5.1-1.5 5.1h-21.1l-0.3-0.2c-0.1 0-2.7-1.9-2.7-5.5s2.6-5.4 2.6-8-1.1-2.9-1.1-4.5 1.8-11.5 2.3-14.4c-0.4-0.9-1.3-3.1-1.3-4.8s0.5-2.3 1-3c-1.4-2-2.5-4.2-3.3-6.7-8 4.7-17.2 7.2-27.4 7.3-7 0-12.4-2.9-12.4-2.9v2.9c0 6.1-9.5 12.7-9.5 24.2s1.1 3.5 2.6 4.3c1.6 0.9 3.7 2.1 3.7 6s-1.7 5.3-1.7 5.3h-22.7s-2.8-2.1-2.8-5.2 1.3-5.5 1.3-8.7-0.5-3.3-0.5-5.3 1.5-5.9 2.2-7.8c-0.3-0.5-0.7-1.2-0.7-2.1s1-2.1 2.1-2.7c-0.2-0.5-0.4-1-0.4-1.7 0-3.6 7.5-13.7 7.5-31.4h-0.8c-5 13.9-12.7 20.4-12.7 25.6s1.3 7.3 1.3 7.3l-0.3 0.4c-1.6 0-3.1-1.4-4.1-3.4l-0.7 0.2s-1.1 2.9 1.2 9.4l-0.6 0.2c-3.7-1.7-5.4-7.5-4.9-9.9l-0.9-0.4c-1 2-1.3 4.5-0.8 7.1l-0.6 0.2s-3.3-2-3.3-5.3c0-7.5 12.8-10.4 16.3-21 3.8-11.4 14.8-53.2 42.1-53.2-10.2 5.1-14 18.7-14 36.3l0.2 2.3 2-1c2-1 6.3-2.8 12.4-2.8s18.8 3.2 26.9 1.9l1.4-0.2v-1.4c-1.1-10 1.2-23.7 7-31 0.5 4 3.8 7.5 7.3 11.1 3.8 4 8.7 8.2 8.7 18.8h0.7s7.4-5.5 7.4-15-2.8-12.3-4.8-15.6c-0.8-1.5-2.8-1.8-4.1-0.8 0 0 5.9 8.1 5.9 16.4s-1.1 6.8-2.5 8.7h-0.7c0-5.7-4.5-10.4-8.5-14.6-3.4-3.5-6.5-6.9-6.5-10s1.9-6.9 4.3-9.6c5.6-5.6 15.9-13.6 22.4-13.6s13.4 6.3 13.4 6.3c1.8 0 6.1 0 9.5 2.3 3.1 2.2 8.2 6.2 10.7 8.2 1.3-0.3 3.2 0.6 3.8 1.7 0.3-1 1.6-2.2 2.7-2.3-0.6-0.8-0.3-2.4 0.5-3-1-1-1.3-2.8-1-4.3-2.3-3.1-15.2-19.9-15.2-29.4s11.1-14.7 11.5-14.9l1.6 1.5c-0.7 2.7 0 4.5 2.4 5.9l-0.5 2.3c-0.2 0-5 0.8-5 4.9s4.1 8.6 8.5 14c6.3 7.7 13.5 16.4 13.5 26s-1.5 7.8-3 9.8c-0.5 0.7-1 1.4-2.2 1.7-2.4 0.7-5 1.2-7.2 1.2-6.1 0-7.7-1.6-9.6-1.6s-3.8 2.4-3.8 4.3c0 0 3.2 1.5 7.6 1.5 14.8 0 21.6-8.4 21.6-8.4zm-36.2-6.2s-0.4-3.2-4-3.2-4.3 4-4.3 4l2.7-1.8s0.3 2.3 2.4 2.3 3.2-1.3 3.2-1.3zm-14.7 94.6c-2.1-1.6-4.2-3.3-4.8-6.9-0.6-3.3-2.5-15.7-2.9-18.2 0.2-0.5 0.4-1.2 0.4-2.2 0-1.4-1.4-2.3-2.4-2.8l0.4-2.3s-4.6-8.1-4.6-16.1v-0.5c-4.7 4.9-4.5 9-4.5 17.5v5.8c0 4.1-1.3 8.2-2.5 11.7-0.6 1.8-1.2 3.6-1.5 5.1 0.7 2.7 1.2 4.8 1.2 5.3v2.6c0 1.4 1.3 2.5 2.1 3v4.1c0 2.9 2.5 5.7 2.5 5.7h19s1.8-2.1 1.8-5.1-2.1-5.1-4.2-6.7zm101.8 137.9-19.4-23.7s0.8-4.4 3.2-6.4c2.3-2 6.6-3.3 6.6-3.3l10.2 10.9v-14.5s3.8-3.4 11.9-3.4 13.2 2.6 13.2 2.6v16.1c0 1.1-0.4 2.5-0.8 4-0.6 2.1-1.2 4.5-1.2 7.9-2 3-4.3 5.6-6.9 7.9-1.2 1.1-1.5 2.9-0.5 4.3 7.7-5.2 11.1-12.8 11.1-12.8s5.2 0.2 8.1 3c2.8 2.7 4 7.1 4 7.1l-5.2 4.8 0.5 3.5c-4.2 0.9-7.9 3.3-11.1 6.9l-0.2 11.1c-1.9 1.8-3.9 3.4-6.2 4.9-1.4 0.9-1.9 2.6-1.1 4.1 7-3.6 12.4-8.7 13.8-10.2 2.6-2.8 6.8-9.9 6.8-9.9s4 0.7 6.9 3.9 3 6.5 3 6.5-5.1 8-7 9.5c-0.8 0.7-2.1 1.3-3.5 2-1.7 0.8-3.7 1.8-4.7 2.8-1.5 1.6-6 8.9-7.9 12v6.9c-2 2.6-4.3 5-6.8 7.2-1.2 1.1-1.4 3-0.4 4.3 9-7.3 12.6-12.5 12.6-12.5s4.9 0 7.4 3.2c2.7 3.5 3.2 7.1 3.2 7.1s-8.7 5.6-10.9 7.7c-1.8 1.7-4.2 5.6-4.8 6.8v10.4h-24.6v-25.3c-0.5-0.9-3.7-5.2-5.7-6.3-2.8-1.6-9.9-5.3-9.9-5.3s-1-4.2 0.9-7.5c1.8-3.3 6.9-5.7 6.9-5.7l7.6 6.6c0.4-1.7 0.9-4.3 0.9-6.5s-0.9-7.7-1.3-9.4c-1.1-0.5-3.4-1.7-5-3.1-1.9-1.8-10.4-12.9-10.4-12.9s-0.3-3.4 1.8-6.1c2-2.6 6.2-4 6.2-4l8.4 9c0.6-2.1 1.4-5.4 1.4-7.8s-0.8-7.1-1.1-8.2zm29.4 62.7c0.8 2 2.1 3.6 4.2 4.8l2.9-0.9c-1.2-3.8-3-5.8-6.1-6.6l-1 2.6zm7.7-41.4c0.7 2 2.2 3.4 4.5 4.3l2.3-1.2c-1.3-3.3-3-5.3-6.1-6zm-8.6-26.7c1.1 2.4 2.9 4.3 5.6 5.5l2.4-1.4c-1.3-3.4-3.6-4.9-7.1-6.3zm-23.2-29.7 0.9 2.2c4.8 1.4 9.4 1.2 13.8 0l0.9-2.2c-5.2-2.1-10.2-2.1-15.7 0zm-122.3-5.9c1.1 1.2 2.2 2.5 3.2 3.8-5.5 0-11.3 0.8-17.2 2.1 5.5 2.1 11 4.6 16.4 7.8 5.4 3.1 10.4 6.6 14.9 10.3-6.9-22.7-21.4-38.4-38.2-38.4s-18.8 5.3-25.9 14.3c8.1-0.2 17 1.1 26 3.7 7.2-2.1 14.2-3.3 20.9-3.7zm155-137.3c-2.1 1-4.4 1.9-6.6 2.7-6 2.1-12.4 3.6-18.7 3.8v-77.7h-4v81.8c8.9 0 20.2-3.5 28.5-7.7 1-0.5 1.4-1.8 0.9-2.8zm-235.8 196c-4.1 10.7-4.2 21.1 0.6 29.6 4.9 8.5 14 13.6 25.3 15.3-4.2-7-7.5-15.2-9.7-24.3-6.8-6.5-12.3-13.5-16.2-20.6zm316.5-193.2c8.3 4.2 19.4 7.7 28.5 7.7v-81.8h-4v77.7c-1.6 0-3.3-0.1-4.9-0.4-7-1-14-3.2-20.4-6.1-0.5 1-0.2 2.3 0.9 2.8zm-197.7 153.9c-1.2-1.6-3.7-1.9-5.3-0.6 0.8 1 1.5 2 2.2 3.1 0.7 1.2 1.3 2.6 1.8 3.9-5.3-0.6-9.5-5.1-9.5-10.6s0.5-3.7 1.4-5.2c-4.4-2.7-9.6-4.5-15.5-5.4 4.2 7 7.5 15.2 9.7 24.3 6.8 6.5 12.3 13.5 16.2 20.6 4.1-10.7 4.2-21.1-0.6-29.6-0.1-0.2-0.2-0.4-0.3-0.5zm-185.8-304.2h458.9v228.1c0 58.3-12 110.3-35.6 154.6-19 35.4-45.4 66-78.5 90.7-56.5 42.2-115 53.2-115 53.2s-59-11-115.5-53.2c-33.2-24.7-59.6-55.2-78.5-90.7-23.6-44.2-35.6-96.2-35.6-154.6v-228.1zm192.1 308.4c2.5-1.9 4.1-5 4.1-8.4 0-5.9-4.8-10.7-10.7-10.7s-4.9 0.9-6.7 2.4c-5.8-3.6-12.9-5.9-20.9-6.7-8.2-11.5-19.2-18.6-31.1-18.6s-22.8 7-31.1 18.6c-7.6 0.7-14.4 2.8-20.1 6.2-1.7-1.2-3.8-1.8-6-1.8-5.9 0-10.7 4.8-10.7 10.7s1.1 5.4 2.9 7.3c-3.5 9.4-2.3 20.5 2.7 31.6-5.9 12.9-6.5 25.9-0.5 36.2s17.5 16.2 31.6 17.6c5.7 8 12.7 13.8 20.4 16.7l1.8 0.6h0.2c0.6 0.2 1.1 0.3 1.7 0.4 0.4 0 0.8 0.2 1.2 0.2h0.5c1.7 0.3 3.5 0.5 5.2 0.5 0 2.2-2 4-4.2 3.7-1.8-0.2-3.6-0.6-5.4-1.1 1.7 3.5 5.4 6 9.6 6s10.6-4.7 10.7-10.6c7.7-2.8 14.7-8.7 20.4-16.6 14.1-1.4 25.7-7.3 31.6-17.6 6-10.3 5.3-23.3-0.5-36.2 4.8-10.6 6.1-21.3 3.1-30.5zm74.9-225.7v86.5h58c1.6 0 3-1.1 3.4-2.6h-59.8l4.6-4.7c27.7 0 38.7-11.7 51.5-11.9 6.5 0.2 12.4 3.8 15.5 6.2l0.9-83.2h3l0.9 83.2c3.1-2.4 9-6 15.5-6.2 12.8 0.2 23.8 11.9 51.5 11.9l4.6 4.7h-59.8c0.4 1.6 1.8 2.7 3.4 2.7h58v-86.5l-4.2-3.2v-7.3h-6.2v-3.4h-5.3v3.3h2.8v58.4c0 1.6-1.3 2.8-2.8 2.8l-2.6-68.7c-14.3 3.5-21.2-10.5-37.3-10.5s-20 12.4-20 12.4-4-12.4-20-12.4-23 13.9-37.3 10.5l-2.6 68.7c-1.6 0-2.8-1.3-2.8-2.8v-58.4h2.8v-3.2h-5.3v3.4h-6.2v7.3l-4.2 3.2zm66.3 85c0 1.7 1.3 3 3 3h13.1c1.7 0 3-1.3 3-3h-19.2zm-322.2 58.8h218.6v288.6c9.5-2 59.6-14.1 108.9-51.1 31.7-23.8 57-53 75.1-87 22.7-42.5 34.1-92.6 34.1-149v-1.6h-218.1v-215.5h-218.6v215.5zm115.8 162.8c-7.2 2.1-14.2 3.3-20.9 3.7-1.1-1.2-2.2-2.5-3.2-3.8 5.5 0 11.3-0.8 17.2-2.1-5.5-2.1-11-4.6-16.4-7.8-5.4-3.1-10.4-6.6-14.9-10.3 5.5 18.1 15.9 31.7 28.3 36.5 1.6-4 5.4-6.8 9.9-6.8s8.4 2.8 9.9 6.8c5.9-2.3 11.4-6.6 16-12.4h-1.4c-7.7 0-16.1-1.3-24.5-3.8zm59.9-45.8c4.1 10.7 4.2 21.1-0.6 29.6-4.9 8.5-14 13.6-25.3 15.3-1.6 0.3-3.3 0.4-5 0.6-6.8 0.5-14.3-0.2-22.1-2 5.5-2.1 11-4.6 16.4-7.8 3.3-1.9 6.4-3.9 9.3-6 0.8-2.2 1.6-4.4 2.2-6.7-4.1 3.3-8.7 6.4-13.6 9.3-7 4.1-14.2 7.2-21.3 9.4-7.1-2.2-14.2-5.3-21.3-9.4-17.1-9.9-29.9-23.3-36.6-36.8 3-6.2 7.3-12.3 12.8-18.1-1 5.8-1.5 11.9-1.5 18.1s0.2 7.4 0.5 11c1.5 1.8 3 3.6 4.7 5.3-0.8-5.2-1.2-10.7-1.2-16.4 0-17.6 4.2-33.7 11-45.8-1.7 0.2-3.3 0.5-4.9 0.8-3 5.9-5.4 12.6-7.2 19.8-6.8 6.5-12.3 13.5-16.2 20.6-4.1-10.7-4.2-21.1 0.6-29.6 0.1-0.2 0.2-0.4 0.3-0.5 1.3-1.6 3.7-1.9 5.3-0.6-0.8 1-1.5 2-2.2 3.1-0.7 1.3-1.3 2.6-1.8 4h0.4c5.9 0 10.7-4.8 10.7-10.7s-0.7-4.2-1.8-5.9c4.2-2.3 9-3.9 14.3-4.8 1.6-0.3 3.3-0.4 5-0.6 6.8-0.5 14.3 0.2 22.1 2-5.5 2.1-11 4.6-16.4 7.8-3.3 1.9-6.4 3.9-9.3 6-0.8 2.2-1.6 4.4-2.2 6.7 4.1-3.3 8.7-6.4 13.6-9.3 7-4.1 14.2-7.2 21.3-9.4 7.1 2.2 14.2 5.3 21.3 9.4 17.1 9.9 29.9 23.3 36.6 36.8-3 6.2-7.3 12.3-12.8 18.1 1-5.8 1.5-11.9 1.5-18.1s-0.2-7.4-0.5-11c-1.5-1.8-3-3.6-4.7-5.3 0.8 5.2 1.2 10.7 1.2 16.3 0 17.6-4.2 33.7-11 45.8 1.7-0.2 3.3-0.5 4.9-0.8 3-5.9 5.5-12.6 7.2-19.8 6.8-6.5 12.3-13.5 16.2-20.6zm-69.2-29.5c0 5.1 4.2 9.3 9.3 9.3s9.3-4.2 9.3-9.3-4.2-9.3-9.3-9.3-9.3 4.2-9.3 9.3zm-14.8 26c5.1 0 9.3-4.2 9.3-9.3s-4.2-9.3-9.3-9.3-9.3 4.2-9.3 9.3 4.2 9.3 9.3 9.3zm18.3 19.4c0-5.1-4.2-9.3-9.3-9.3s-9.3 4.2-9.3 9.3 4.2 9.3 9.3 9.3 9.3-4.2 9.3-9.3zm15.1-20.6c0-5.1-4.2-9.3-9.3-9.3s-9.3 4.2-9.3 9.3 4.2 9.3 9.3 9.3 9.3-4.2 9.3-9.3zm15 20.6c0-5.1-4.2-9.3-9.3-9.3s-9.3 4.2-9.3 9.3 4.2 9.3 9.3 9.3 9.3-4.2 9.3-9.3zm9.1-28.6c0-5.1-4.2-9.3-9.3-9.3s-9.3 4.2-9.3 9.3 4.2 9.3 9.3 9.3 9.3-4.2 9.3-9.3zm287.4-444.5v81.6c1.2 0.7 2.5 1.1 3.7 1.1 3.3 0 7.6-3.5 7.6-3.5v13.2c-4.4 2.7-9.5 4.1-14.6 4.1-19.5 0-28.5-14.3-38-33.6-0.8 2.7-3.1 9.3-7.3 16-7.2 11.5-16.7 17.6-27.3 17.6-19.5 0-28.5-14.3-38-33.6-0.8 2.7-3.1 9.3-7.3 16-7.2 11.5-16.7 17.6-27.3 17.6-19.5 0-28.5-14.3-38-33.6-0.8 2.7-3.1 9.3-7.3 16-7.2 11.5-16.7 17.6-27.3 17.6-19.5 0-28.5-14.3-38-33.6-0.8 2.7-3.1 9.3-7.3 16-7.2 11.5-16.7 17.6-27.3 17.6-19.5 0-28.5-14.3-38-33.6-0.8 2.7-3.1 9.3-7.3 16-7.2 11.5-16.7 17.6-27.3 17.6-19.5 0-28.5-14.3-38-33.6-0.8 2.7-3.1 9.3-7.3 16-7.2 11.5-16.7 17.6-27.3 17.6-10.6 0-6-0.4-8.7-1.1v-15.3s3.4 1.9 7 2.2v-86c-3-3.3-7-1.7-7-1.7v-7.3c3.2-1.3 6.6-2 10.1-2 19.5 0 28.5 14.3 38 33.6 0.8-2.7 3.1-9.3 7.3-16 7.2-11.5 16.7-17.6 27.3-17.6 19.5 0 28.5 14.3 38 33.6 0.8-2.7 3.1-9.3 7.3-16 7.2-11.5 16.7-17.6 27.3-17.6 19.5 0 28.5 14.3 38 33.6 0.8-2.7 3.1-9.3 7.3-16 7.2-11.5 16.7-17.6 27.3-17.6 19.5 0 28.5 14.3 38 33.6 0.8-2.7 3.1-9.3 7.3-16 7.2-11.5 16.7-17.6 27.3-17.6 19.5 0 28.5 14.3 38 33.6 0.8-2.7 3.1-9.3 7.3-16 7.2-11.5 16.7-17.6 27.3-17.6 19.5 0 28.5 14.3 38 33.6 0.8-2.7 3.1-9.3 7.3-16 7.2-11.5 16.7-17.6 27.3-17.6s9.5 0.9 13.2 2.6v5.5s-9.4 5.1-11.3 6.7zm-12.2 67.4c2.3 3.9 4.8 7.4 7.2 10.1v-81.2s-3.7 3.1-3.7 12.4v0.7c-1.2 1.7-2.4 3.6-3.5 5.7v52.4zm-12.1-23.5c2.1 4.3 4.5 9.5 7.2 14.6v-51.5s-3.7 3.1-3.7 12.4v14.4c-0.9 2.3-1.7 4.6-2.4 6.6l-1.1 3.4zm-60.5 23.9c3 5.4 7.2 10.3 7.2 10.3v-81.9s-3.7 3.1-3.7 12.4v0.7c-1.2 1.7-2.4 3.6-3.5 5.7zm-12.1-23.9c2.2 4.6 4.7 9.8 7.2 14.6v-51.5s-3.7 3.1-3.7 12.4v14.4c-0.9 2.3-1.7 4.6-2.4 6.6l-1.1 3.4zm-60.5 23.9c3 5.4 7.2 10.3 7.2 10.3v-81.9s-3.7 3.1-3.7 12.4v0.7c-1.2 1.7-2.4 3.6-3.5 5.7zm-12.1-23.9c2.2 4.6 4.7 9.8 7.2 14.6v-51.5s-3.7 3.1-3.7 12.4v14.4c-0.9 2.3-1.7 4.6-2.4 6.6l-1.1 3.4zm-60.5 23.9c3 5.4 7.2 10.3 7.2 10.3v-81.9s-3.7 3.1-3.7 12.4v0.7c-1.2 1.7-2.4 3.6-3.5 5.7zm-12.1-23.9c2.2 4.6 4.7 9.8 7.2 14.6v-51.5s-3.7 3.1-3.7 12.4v14.4c-0.9 2.3-1.7 4.6-2.4 6.6l-1.1 3.4zm-60.5 23.9c3 5.4 7.2 10.3 7.2 10.3v-81.9s-3.7 3.1-3.7 12.4v0.7c-1.2 1.7-2.4 3.6-3.5 5.7zm-12.1-23.9c2.2 4.6 4.7 9.8 7.2 14.6v-51.5s-3.7 3.1-3.7 12.4v14.4c-0.9 2.3-1.7 4.6-2.4 6.6l-1.1 3.4zm-60.5 23.9c3 5.4 7.2 10.3 7.2 10.3v-81.9s-3.7 3.1-3.7 12.4v0.7c-1.2 1.7-2.4 3.6-3.5 5.7zm-12.1-23.9c2.2 4.6 4.7 9.8 7.2 14.6v-51.5s-3.7 3.1-3.7 12.4v14.4c-0.9 2.3-1.7 4.6-2.4 6.6l-1.1 3.4zm-45.6 42.5c-1.3 0.2-2.8 0.4-4.3 0.4-2.7 0-5.1-0.6-6.8-1.1v3.9s2.7 0.7 4.8 0.7c3.5 0 6.1-1.7 6.1-1.7v-2.1zm4.4-71.7c-2.4-4.1-4.8-7.8-7.2-10.8v76.2c2.5-2.6 4.9-7.3 7.2-12.5zm11.9 23c-2.3-4.7-4.6-9.5-6.9-14v51.1s3.7-3.1 3.7-12.4v-15.4c0.8-2.1 1.5-4.1 2.1-6l1.1-3.4zm56.7 49.4c-27.1 0-41.9-97.6-75.5-97.6s-2.4 0-3.5 0.1v1.9c24.6 4.1 42.3 98.5 72.8 98.5 30.5 0 4.5-0.4 6.2-1zm4-72.4c-2.4-4.1-4.8-7.8-7.2-10.8v72.6c2.4-2.4 4.8-6.1 7.2-10.4v-51.5zm11.9 23c-2.3-4.7-4.6-9.5-6.9-14v51.1s3.7-3.1 3.7-12.4v-15.4c0.8-2.1 1.5-4.1 2.1-6l1.1-3.4zm56.8 49.4c-27.1 0-41.9-97.6-75.5-97.6-33.6 0-2.4 0-3.5 0.1v1.9c24.6 4.1 42.3 98.5 72.8 98.5s4.5-0.4 6.2-1zm3.9-72.4c-2.4-4.1-4.8-7.8-7.2-10.8v72.6c2.4-2.4 4.8-6.1 7.2-10.4v-51.5zm11.9 23c-2.3-4.7-4.6-9.5-6.9-14v51.1s3.7-3.1 3.7-12.4v-15.4c0.8-2.1 1.5-4.1 2.1-6l1.1-3.4zm56.9 49.4c-27.1 0-41.9-97.6-75.5-97.6s-2.4 0-3.5 0.1v1.9c24.6 4.1 42.3 98.5 72.8 98.5s4.5-0.4 6.2-1zm3.8-72.4c-2.4-4.1-4.8-7.8-7.2-10.8v72.6c2.4-2.4 4.8-6.1 7.2-10.4v-51.5zm11.9 23c-2.3-4.7-4.6-9.5-6.9-14v51.1s3.7-3.1 3.7-12.4v-15.4c0.8-2.1 1.5-4.1 2.1-6l1.1-3.4zm56.9 49.4c-27.1 0-41.9-97.6-75.5-97.6s-2.4 0-3.5 0.1v1.9c24.6 4.1 42.3 98.5 72.8 98.5s4.5-0.4 6.2-1zm3.8-72.4c-2.4-4.1-4.8-7.8-7.2-10.8v72.6c2.4-2.4 4.8-6.1 7.2-10.4v-51.5zm11.9 23c-2.3-4.7-4.6-9.5-6.9-14v51.1s3.7-3.1 3.7-12.4v-15.4c0.8-2.1 1.5-4.1 2.1-6l1.1-3.4zm57 49.4c-27.1 0-41.9-97.6-75.5-97.6s-2.4 0-3.5 0.1v1.9c24.6 4.1 42.3 98.5 72.8 98.5s4.5-0.4 6.2-1zm3.8-72.4c-2.4-4.1-4.8-7.8-7.2-10.8v72.6c2.4-2.4 4.8-6.1 7.2-10.4v-51.5zm11.8 23c-2.3-4.7-4.6-9.5-6.9-14v51.1s3.7-3.1 3.7-12.4v-15.4c0.8-2.1 1.5-4.1 2.1-6l1.1-3.4zm-18.5-48.2c-1.3 0-2.4 0-3.5 0.1v1.9c24.6 4.1 42.3 98.5 72.8 98.5s4.5-0.4 6.2-1v-1.9c-27.1 0-41.9-97.6-75.5-97.6zm74.5 3.8 4.7-2.4s-3.1-1.5-5.7-1.5-1.9 0.2-1.9 0.2v2.3c1 0.3 2 0.8 3 1.4zm-104.5 439.5c-1.6-0.5-3.3 0.4-3.7 2.1-2.7 12.9 5.3 22.8 10.3 28.9 1.7 2.1 4 4.8 4 7.9s-0.2 2.4-0.4 3l-2.9-3.2-2.2 3.9-2.3-3.2-2.1 2.2c-15.1-8.7-22.8-22.1-22.8-22.1-1 0.4-1.9 1-2.7 2 0 0-3.3-3.6-3.3-10.5 0-14 8.2-23.6 10.7-26.1-0.8-3-3-12.8 1.8-19.2-0.9-1.5-2.3-4.4-2.3-7.7 0-5 3-7.3 6.1-7.3s4.8 1.9 5.8 3.1c0 0 5.6-1 10.7-0.2 0.3-0.4 1.2-1.8 2.9-1.8s3.4 2.2 3.4 4.5-0.1 1.6-0.1 1.6 2.4 1.5 5.1 1.5c0 0 2 1.2 2 2.6s-2.2 3.2-0.1 5.6l-2 1.7s1.7 1.7 1.7 3.5c0 0-10.2-1.2-7.7 10.5 8.9 1.9 16.1 17.5 16.1 17.5s-1.3 0.1-2.4 0.4c3.9 3.8 13.8 26.7 14.7 29.1 0 0 4.6 4.2 4.6 12.5s-4 7-4 7v-3.9s-1.3 2.3-3.3 2.3v-4.6s-0.8 2-3.1 2v-3.5c-1.6 0-3.7-1.9-3.7-4.8 0-7.8-6.3-21.7-9.2-27.6-0.7-1.5-2.5-2.1-4-1.3 0 0 10.2 19.6 10.2 28.9 0 15.8-12.6 26.6-12.7 26.7 1.1 1.3 3 1.4 4.2 0.1 2.5-2.6 6.5-7.5 9.1-14.2 2.1 4.3 5.2 12.1 5.2 21.3s-1.8 15.5-1.8 15.5h-0.6s-0.9-1.8-1.8-2.5c0 0-0.9 2.1-2.1 4.7 2.8 1 7.7 4.2 7.7 10.3h-25.4s0.4-10.7-2.3-16.7c1.1-2.9 2.4-7.2 2.4-11.9 0-7.7-6.4-14.6-10.1-17.8-1.3-1.1-3.2-0.9-4.2 0.4 0.1 0 11.3 8.4 11.3 17.4s-0.7 6.4-1.5 8.9c-1.3 3.5-2.9 6.6-4.9 9.3 1.7 1 4 2.8 4 4.8s-2.8 5.6-2.8 5.6h-22.4s1-2.5 1-6.6c0-10.9-7.2-19.7-7.2-27.7s1-6.5 1-6.5c-2.2-0.8-3.3 1.6-3.3 1.6s-1-1.6-1-3.9c0-6.6 11.3-19 12.8-27.4 10.3 11.6 20.3 16.3 20.3 16.3l2.7-1.5 2.3 3.6 2.3-4.4 2.8 3.8s3.2-2.8 3.2-8.1-2.5-6.8-4.6-9.5c-5.3-6.5-13.2-16.3-8.9-29.1zm-7.6-42.9c-1-1.4-2.4-2.8-4.2-2.8s-2.9 1.7-2.9 3 0.5 2 1.7 1.9c0 0-0.1-2.3 1.2-2.3s0.5 0.1 0.7 0.3c1.1 0.8 2.7 1 3.6 0zm9.2 4.6h2.8c0.2-0.8 0.4-1.2 1-1.8 0 0-2.2-1.7-4-1.7s-2.4 2-2.4 2 0.6 1.4 2.5 1.4z"/></svg><small>Coventry</small></div>
           <div class="edu-body">
             <h3>University of Warwick</h3>
             <p class="cred">BSc Economics</p>
@@ -831,11 +975,145 @@ html.case-open{overflow:hidden}
               <li>Running the Orchenko Foundation intake alongside the degree</li>
             </ul>
           </div>
-          <div class="metric"><b>Year 1</b><span>of 3 · graduating 2029</span></div>
+          <div class="metric stack"><div><b>Year <span data-count="1">1</span></b><span>of 3 · graduating 2029</span></div></div>
         </li>
       </ol>
     </section>
 
+  </div>
+
+  <!-- NIGHT ZONE -->
+  <section class="night" id="record" data-tone="night" data-fade aria-label="Record">
+    <div class="ghost" id="ghost" aria-hidden="true"><span>On the</span><span>record</span><span>since 2022</span></div>
+    <div class="page">
+      <div class="blk" id="recognition">
+        <h2><span class="ml" data-reveal><span>Recognition</span></span></h2>
+        <div>
+          <div class="blk-head rv" data-reveal><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1l2.2 6.6L21 5l-4.3 5.6L23 12l-6.3 1.4L21 19l-6.8-2.6L12 23l-2.2-6.6L3 19l4.3-5.6L1 12l6.3-1.4L3 5l6.8 2.6z"/></svg><span class="count mono">05</span></div>
+          <div class="rows">
+            <div class="r rv" data-reveal><span class="n">International Economics Olympiad</span><span class="d">2026</span><span class="t"><b>Joint 1st of <span data-count="142">142</span> teams</b>, Open Track business case</span><span class="evs"><a href="https://drive.google.com/file/d/1r1TICSTrcBw_Z3Owg6vemZKNA5j_c1tI/view" target="_blank" rel="noopener">Results ↗</a></span></div>
+            <div class="r rv" data-reveal><span class="n">International Economics Olympiad</span><span class="d">2025</span><span class="t"><b>Top 10 in Russia</b>, reserve member of Team Russia</span><span class="evs"><a href="https://drive.google.com/file/d/1kQ7Hnq6Rg1e8OJnhgYcgNPj4dE08hfA5/view" target="_blank" rel="noopener">Letter ↗</a></span></div>
+            <div class="r rv" data-reveal><span class="n">All-Russian Olympiad in Economics</span><span class="d">2024, 2025</span><span class="t"><b>Top 35 of <span data-count="140000">140,000</span></b>; RUB 700,000 award and guaranteed admission</span><span class="evs"><a href="https://drive.google.com/file/d/1-wE9vKN6-QD9oZo0H54Bwl3kBN4i7xJm/view" target="_blank" rel="noopener">Diploma ↗</a></span></div>
+            <div class="r rv" data-reveal><span class="n">Int'l Mathematical Modeling Challenge</span><span class="d">2025</span><span class="t"><b>Honourable Mention</b>, representing Russia, for a global league scheduling model</span><span class="evs"><a href="https://drive.google.com/file/d/1wPriJQFSBiW0ULctgq6niv4v_G3ChDJq/view" target="_blank" rel="noopener">Certificate ↗</a><a href="https://drive.google.com/file/d/1Jrxm_sLK7rf-ww7YkjuwqVuNjJzVvROg/view" target="_blank" rel="noopener">Paper ↗</a></span></div>
+            <div class="r rv" data-reveal><span class="n">Global Youth Entrepreneurship Challenge</span><span class="d">2025</span><span class="t"><b>Top 5 of <span data-count="430">430</span> teams</b> internationally, with a business plan for captioning glasses</span><span class="evs"><a href="https://drive.google.com/file/d/1Nz7z1HvnWPentLxDiYS8I1yJEEvLpcF1/view" target="_blank" rel="noopener">Paper ↗</a><a href="https://drive.google.com/file/d/1XBw5Ijkxc4KKnyZPiEHTlYldbUOeSBqA/view" target="_blank" rel="noopener">Pitch ↗</a></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="blk xp-blk" id="experience">
+        <div class="xp-side">
+          <h2><span class="ml" data-reveal><span>Experience</span></span></h2>
+          <p class="xp-intro rv" data-reveal>Two years, read top to bottom. Each role handed the next one a method.</p>
+          <div class="xp-now rv" data-reveal aria-hidden="true">
+            <div class="xp-yr"><span id="xpYr">2024</span></div>
+            <div class="xp-step mono"><span id="xpIx">01</span> / 05 · <span id="xpTh">Measure</span></div>
+            <div class="xp-bar"><i id="xpBar"></i></div>
+          </div>
+        </div>
+        <div class="xp-list" id="xpList">
+          <i class="xp-rail" aria-hidden="true"><i id="xpFill"></i></i>
+          <ol class="xp-ol">
+          <li class="xp" data-reveal data-yr="2024" data-th="Measure">
+            <a class="xp-a" href="#case-brics" data-case="brics">
+              <span class="xp-node" aria-hidden="true"><i></i></span>
+              <span class="xp-top"><span class="xp-n mono">01</span><span class="xp-date mono" data-scramble>Oct 2024 – Sep 2025</span><span class="xp-th mono">Measure</span></span>
+              <span class="xp-org">St Petersburg State University</span>
+              <span class="xp-role">Project Manager &amp; Lead Researcher</span>
+              <span class="xp-beat">Learning to compare systems</span>
+              <span class="xp-txt">Led seven researchers through five countries&#8217; ESG education. The finding: centralised systems move faster. RBC Trends published it.</span>
+              <span class="xp-chips"><span class="xc"><b data-count="5">5</b> countries</span><span class="xc"><b data-count="15">15</b> universities</span><span class="xc"><em>RBC Trends</em></span></span>
+              <span class="xp-go mono">Read the case <span aria-hidden="true">→</span></span>
+            </a>
+            <p class="xp-carry">Carried forward: structure beats anecdote.</p>
+          </li>
+          <li class="xp" data-reveal data-yr="2025" data-th="Model">
+            <a class="xp-a" href="#case-carbon" data-case="carbon">
+              <span class="xp-node" aria-hidden="true"><i></i></span>
+              <span class="xp-top"><span class="xp-n mono">02</span><span class="xp-date mono" data-scramble>Jul 2025</span><span class="xp-th mono">Model</span></span>
+              <span class="xp-org">RUSAL</span>
+              <span class="xp-role">Analyst Intern, Corporate Services</span>
+              <span class="xp-beat">First real data, first real client</span>
+              <span class="xp-txt">Three weeks inside SAP with three departments. I replaced a plant-wide carbon average with a per-unit model, so Sales can see which metal meets a European buyer&#8217;s limit.</span>
+              <span class="xp-chips"><span class="xc"><b data-count="3">3</b> weeks</span><span class="xc"><b data-count="3">3</b> departments</span><span class="xc"><em>per unit, not per plant</em></span></span>
+              <span class="xp-go mono">Read the case <span aria-hidden="true">→</span></span>
+            </a>
+            <p class="xp-carry">Carried forward: the unit of analysis decides the answer.</p>
+          </li>
+          <li class="xp" data-reveal data-yr="2026" data-th="Allocate">
+            <a class="xp-a" href="#case-fund" data-case="fund">
+              <span class="xp-node" aria-hidden="true"><i></i></span>
+              <span class="xp-top"><span class="xp-n mono">03</span><span class="xp-date mono" data-scramble>May 2026 – now</span><span class="xp-th mono">Allocate</span></span>
+              <span class="xp-org">Fyodor Orchenko Foundation</span>
+              <span class="xp-role">Co-founder &amp; Investment Lead</span>
+              <span class="xp-beat">From analysing money to allocating it</span>
+              <span class="xp-txt">Rebuilt venture scoring for grants that take no equity. The first two teams share RUB 1.25m, paid in tranches as each stage is proven.</span>
+              <span class="xp-chips"><span class="xc">RUB <b data-count="1.25" data-dec="2">1.25</b>m</span><span class="xc"><b data-count="0">0</b>% equity</span><span class="xc"><b data-count="2">2</b> teams funded</span></span>
+              <span class="xp-go mono">Read the case <span aria-hidden="true">→</span></span>
+            </a>
+            <p class="xp-carry">Carried forward: pay for evidence, step by step.</p>
+          </li>
+          <li class="xp" data-reveal data-yr="2026" data-th="Automate">
+            <a class="xp-a" href="#case-cube" data-case="cube">
+              <span class="xp-node" aria-hidden="true"><i></i></span>
+              <span class="xp-top"><span class="xp-n mono">04</span><span class="xp-date mono" data-scramble>Jun 2026</span><span class="xp-th mono">Automate</span></span>
+              <span class="xp-org">Cube Invest, Yerevan</span>
+              <span class="xp-role">Automation project, end to end</span>
+              <span class="xp-beat">From one-off models to systems that run daily</span>
+              <span class="xp-txt">Replaced a brokerage&#8217;s manual morning digest with a pipeline on its own machine: news feeds in, local LLM summary, PDF out.</span>
+              <span class="xp-chips"><span class="xc">−<b data-count="30">30</b> min per issue</span><span class="xc"><b data-count="0">0</b> API cost</span><span class="xc"><em>daily</em></span></span>
+              <span class="xp-go mono">Read the case <span aria-hidden="true">→</span></span>
+            </a>
+            <p class="xp-carry">Carried forward: build it once, let it run.</p>
+          </li>
+          <li class="xp" data-reveal data-yr="2026" data-th="Scale">
+            <a class="xp-a" href="#case-wms" data-case="wms">
+              <span class="xp-node" aria-hidden="true"><i></i></span>
+              <span class="xp-top"><span class="xp-n mono">05</span><span class="xp-date mono" data-scramble>Aug – Sep 2026</span><span class="xp-th mono">Scale</span></span>
+              <span class="xp-org">RUSAL</span>
+              <span class="xp-role">Business Analyst Intern, Analytics &amp; Performance Management</span>
+              <span class="xp-beat">Back at RUSAL, with a bigger brief</span>
+              <span class="xp-txt">A warehouse service had spread to 93 sites over seven years. I priced it across five channels and took three scenarios to the directors.</span>
+              <span class="xp-chips"><span class="xc"><b data-count="93">93</b> sites</span><span class="xc"><b data-count="5">5</b> channels</span><span class="xc"><b data-count="3">3</b> scenarios</span></span>
+              <span class="xp-go mono">Read the case <span aria-hidden="true">→</span></span>
+            </a>
+          </li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="blk">
+        <h2><span class="ml" data-reveal><span>Leadership</span></span></h2>
+        <div>
+          <div class="blk-head rv" data-reveal><svg viewBox="0 0 24 24" aria-hidden="true"><g><circle cx="4" cy="4" r="2.4"/><circle cx="12" cy="4" r="2.4"/><circle cx="20" cy="4" r="2.4"/><circle cx="4" cy="12" r="2.4"/><circle cx="12" cy="12" r="2.4"/><circle cx="20" cy="12" r="2.4"/><circle cx="4" cy="20" r="2.4"/><circle cx="12" cy="20" r="2.4"/><circle cx="20" cy="20" r="2.4"/></g></svg><span class="count mono">02</span></div>
+          <div class="rows">
+            <div class="r rv" data-reveal><span class="n">Letovo Student Self-Government</span><span class="d">2025–26</span><span class="t"><b>Topped the poll with <span data-count="171">171</span> votes (37.4%)</b> of four school-wide candidates. Co-designed the four-tier Regulation on Student Statuses and struck clauses barring lower-tier students from office.</span><span class="evs"><a href="https://drive.google.com/file/d/1jknBUwHaD6_J-g0LqHMeMDOcQ4f15LeS/view" target="_blank" rel="noopener">Protocol ↗</a></span></div>
+            <div class="r rv" data-reveal><span class="n">Q-LESS, Letovo coffee delivery</span><span class="d">2024–25</span><span class="t"><b>Co-founder, head of marketing &amp; PR.</b> Campus coffee delivery paid in our own virtual currency, through a Telegram bot and a <span data-count="300">300</span>-subscriber channel. I designed how the currency was issued, wrote the brand book and tone of voice, ran the channel, directed the promo videos, and negotiated the risk assessment with the principal over three rounds.</span><span class="evs"><a href="https://qless.club" target="_blank" rel="noopener">qless.club ↗</a></span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="blk" id="receipts">
+        <h2><span class="ml" data-reveal><span>Receipts</span></span></h2>
+        <div>
+          <div class="blk-head rv" data-reveal><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 0h12l4 4v20H4zM7 8h10v1.6H7zm0 4h10v1.6H7zm0 4h7v1.6H7z"/></svg><span class="count mono">10</span></div>
+          <div class="rows">
+            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1r1TICSTrcBw_Z3Owg6vemZKNA5j_c1tI/view" target="_blank" rel="noopener"><span class="n">IEO Open Track final results</span><span class="d">Results · 26</span><span class="t">Team ranked joint 1st of 142 in the business case</span><span class="o">Open ↗</span></a>
+            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1kQ7Hnq6Rg1e8OJnhgYcgNPj4dE08hfA5/view" target="_blank" rel="noopener"><span class="n">Team Russia, IEO confirmation</span><span class="d">Letter · 25</span><span class="t">Top ten in national selection, reserve team member</span><span class="o">Open ↗</span></a>
+            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1-wE9vKN6-QD9oZo0H54Bwl3kBN4i7xJm/view" target="_blank" rel="noopener"><span class="n">All-Russian Olympiad in Economics</span><span class="d">Diploma</span><span class="t">Prize-winner diploma</span><span class="o">Open ↗</span></a>
+            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1wPriJQFSBiW0ULctgq6niv4v_G3ChDJq/view" target="_blank" rel="noopener"><span class="n">IMMC Honourable Mention</span><span class="d">Cert · 25</span><span class="t">Team certificate, representing Russia</span><span class="o">Open ↗</span></a>
+            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1Jrxm_sLK7rf-ww7YkjuwqVuNjJzVvROg/view" target="_blank" rel="noopener"><span class="n">Global Sports League Scheduling</span><span class="d">Paper · 32pp</span><span class="t">IMMC submission: weighted team selection and block scheduling</span><span class="o">Open ↗</span></a>
+            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1Nz7z1HvnWPentLxDiYS8I1yJEEvLpcF1/view" target="_blank" rel="noopener"><span class="n">GYEC finals: SENSE:ABLE</span><span class="d">Paper · 25</span><span class="t">Business plan for captioning glasses and sign-language wristbands</span><span class="o">Open ↗</span></a>
+            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1XBw5Ijkxc4KKnyZPiEHTlYldbUOeSBqA/view" target="_blank" rel="noopener"><span class="n">GYEC finals pitch</span><span class="d">Video</span><span class="t">The pitch we gave in the final</span><span class="o">Watch ↗</span></a>
+            <a class="r rv" data-reveal href="https://trends.rbc.ru/trends/green/68b5829d9a79477e999d504f" target="_blank" rel="noopener"><span class="n">RBC Trends: ESG education in BRICS</span><span class="d">Press · RU</span><span class="t">Article built on our SPbU-backed study</span><span class="o">Open ↗</span></a>
+            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1jknBUwHaD6_J-g0LqHMeMDOcQ4f15LeS/view" target="_blank" rel="noopener"><span class="n">School election results</span><span class="d">Protocol · 25</span><span class="t">171 votes, 37.4%, first of four candidates</span><span class="o">Open ↗</span></a>
+            <div class="r rv" data-reveal><span class="n">RUSAL reference letter</span><span class="d">Letter · 25</span><span class="t">From my internship supervisor, quoted above. Score reports likewise.</span><span class="o mute">On request</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="page">
     <!-- EXHIBITS -->
     <div class="shead" id="exhibits">
       <h2><span class="ml" data-reveal><span>Exhibits</span></span></h2>
@@ -899,69 +1177,6 @@ html.case-open{overflow:hidden}
     </div>
   </div>
 
-  <!-- NIGHT ZONE -->
-  <section class="night" id="record" data-tone="night" aria-label="Record">
-    <div class="ghost" id="ghost" aria-hidden="true"><span>On the</span><span>record</span><span>since 2022</span></div>
-    <div class="page">
-      <div class="blk">
-        <h2><span class="ml" data-reveal><span>Recognition</span></span></h2>
-        <div>
-          <div class="blk-head rv" data-reveal><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1l2.2 6.6L21 5l-4.3 5.6L23 12l-6.3 1.4L21 19l-6.8-2.6L12 23l-2.2-6.6L3 19l4.3-5.6L1 12l6.3-1.4L3 5l6.8 2.6z"/></svg><span class="count mono">05</span></div>
-          <div class="rows">
-            <div class="r rv" data-reveal><span class="n">International Economics Olympiad</span><span class="d">2026</span><span class="t"><b>Joint 1st of <span data-count="142">142</span> teams</b>, Open Track business case</span><span class="evs"><a href="https://drive.google.com/file/d/1r1TICSTrcBw_Z3Owg6vemZKNA5j_c1tI/view" target="_blank" rel="noopener">Results ↗</a></span></div>
-            <div class="r rv" data-reveal><span class="n">International Economics Olympiad</span><span class="d">2025</span><span class="t"><b>Top 10 in Russia</b>, reserve member of Team Russia</span><span class="evs"><a href="https://drive.google.com/file/d/1kQ7Hnq6Rg1e8OJnhgYcgNPj4dE08hfA5/view" target="_blank" rel="noopener">Letter ↗</a></span></div>
-            <div class="r rv" data-reveal><span class="n">All-Russian Olympiad in Economics</span><span class="d">2024, 2025</span><span class="t"><b>Top 35 of <span data-count="140000">140,000</span></b>; RUB 700,000 award and guaranteed admission</span><span class="evs"><a href="https://drive.google.com/file/d/1-wE9vKN6-QD9oZo0H54Bwl3kBN4i7xJm/view" target="_blank" rel="noopener">Diploma ↗</a></span></div>
-            <div class="r rv" data-reveal><span class="n">Int'l Mathematical Modeling Challenge</span><span class="d">2025</span><span class="t"><b>Honourable Mention</b>, representing Russia, for a global league scheduling model</span><span class="evs"><a href="https://drive.google.com/file/d/1wPriJQFSBiW0ULctgq6niv4v_G3ChDJq/view" target="_blank" rel="noopener">Certificate ↗</a><a href="https://drive.google.com/file/d/1Jrxm_sLK7rf-ww7YkjuwqVuNjJzVvROg/view" target="_blank" rel="noopener">Paper ↗</a></span></div>
-            <div class="r rv" data-reveal><span class="n">Global Youth Entrepreneurship Challenge</span><span class="d">2025</span><span class="t"><b>Top 5 of <span data-count="430">430</span> teams</b> internationally, with a business plan for captioning glasses</span><span class="evs"><a href="https://drive.google.com/file/d/1Nz7z1HvnWPentLxDiYS8I1yJEEvLpcF1/view" target="_blank" rel="noopener">Paper ↗</a><a href="https://drive.google.com/file/d/1XBw5Ijkxc4KKnyZPiEHTlYldbUOeSBqA/view" target="_blank" rel="noopener">Pitch ↗</a></span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="blk">
-        <h2><span class="ml" data-reveal><span>Experience</span></span></h2>
-        <div>
-          <div class="blk-head rv" data-reveal><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c.9 6.4 4.6 10.1 12 12-7.4 1.9-11.1 5.6-12 12-.9-6.4-4.6-10.1-12-12 7.4-1.9 11.1-5.6 12-12z"/></svg><span class="count mono">05</span></div>
-          <div class="rows">
-            <a class="r rv" data-reveal href="#case-wms" data-case="wms"><span class="n">RUSAL</span><span class="d">Aug–Sep 2026</span><span class="t">Business Analyst Intern, Analytics &amp; Performance Management</span><span class="o">Case →</span></a>
-            <a class="r rv" data-reveal href="#case-cube" data-case="cube"><span class="n">Cube Invest</span><span class="d">Jun 2026</span><span class="t">Daily newsletter automation, end to end</span><span class="o">Case →</span></a>
-            <a class="r rv" data-reveal href="#case-fund" data-case="fund"><span class="n">Fyodor Orchenko Foundation</span><span class="d">May 2026–</span><span class="t">Co-founder &amp; Investment Lead</span><span class="o">Case →</span></a>
-            <a class="r rv" data-reveal href="#case-carbon" data-case="carbon"><span class="n">RUSAL</span><span class="d">Jul 2025</span><span class="t">Analyst Intern, Corporate Services Directorate</span><span class="o">Case →</span></a>
-            <a class="r rv" data-reveal href="#case-brics" data-case="brics"><span class="n">St Petersburg State University</span><span class="d">2024–25</span><span class="t">Project Manager &amp; Lead Researcher</span><span class="o">Case →</span></a>
-          </div>
-        </div>
-      </div>
-
-      <div class="blk">
-        <h2><span class="ml" data-reveal><span>Leadership</span></span></h2>
-        <div>
-          <div class="blk-head rv" data-reveal><svg viewBox="0 0 24 24" aria-hidden="true"><g><circle cx="4" cy="4" r="2.4"/><circle cx="12" cy="4" r="2.4"/><circle cx="20" cy="4" r="2.4"/><circle cx="4" cy="12" r="2.4"/><circle cx="12" cy="12" r="2.4"/><circle cx="20" cy="12" r="2.4"/><circle cx="4" cy="20" r="2.4"/><circle cx="12" cy="20" r="2.4"/><circle cx="20" cy="20" r="2.4"/></g></svg><span class="count mono">01</span></div>
-          <div class="rows">
-            <div class="r rv" data-reveal><span class="n">Letovo Student Self-Government</span><span class="d">2025–26</span><span class="t"><b>Topped the poll with <span data-count="171">171</span> votes (37.4%)</b> of four school-wide candidates. Co-designed the four-tier Regulation on Student Statuses and struck clauses barring lower-tier students from office.</span><span class="evs"><a href="https://drive.google.com/file/d/1jknBUwHaD6_J-g0LqHMeMDOcQ4f15LeS/view" target="_blank" rel="noopener">Protocol ↗</a></span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="blk" id="receipts">
-        <h2><span class="ml" data-reveal><span>Receipts</span></span></h2>
-        <div>
-          <div class="blk-head rv" data-reveal><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 0h12l4 4v20H4zM7 8h10v1.6H7zm0 4h10v1.6H7zm0 4h7v1.6H7z"/></svg><span class="count mono">11</span></div>
-          <div class="rows">
-            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1r1TICSTrcBw_Z3Owg6vemZKNA5j_c1tI/view" target="_blank" rel="noopener"><span class="n">IEO Open Track final results</span><span class="d">Results · 26</span><span class="t">Team ranked joint 1st of 142 in the business case</span><span class="o">Open ↗</span></a>
-            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1kQ7Hnq6Rg1e8OJnhgYcgNPj4dE08hfA5/view" target="_blank" rel="noopener"><span class="n">Team Russia, IEO confirmation</span><span class="d">Letter · 25</span><span class="t">Top ten in national selection, reserve team member</span><span class="o">Open ↗</span></a>
-            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1-wE9vKN6-QD9oZo0H54Bwl3kBN4i7xJm/view" target="_blank" rel="noopener"><span class="n">All-Russian Olympiad in Economics</span><span class="d">Diploma</span><span class="t">Prize-winner diploma</span><span class="o">Open ↗</span></a>
-            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1wPriJQFSBiW0ULctgq6niv4v_G3ChDJq/view" target="_blank" rel="noopener"><span class="n">IMMC Honourable Mention</span><span class="d">Cert · 25</span><span class="t">Team certificate, representing Russia</span><span class="o">Open ↗</span></a>
-            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1Jrxm_sLK7rf-ww7YkjuwqVuNjJzVvROg/view" target="_blank" rel="noopener"><span class="n">Global Sports League Scheduling</span><span class="d">Paper · 32pp</span><span class="t">IMMC submission: weighted team selection and block scheduling</span><span class="o">Open ↗</span></a>
-            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1Nz7z1HvnWPentLxDiYS8I1yJEEvLpcF1/view" target="_blank" rel="noopener"><span class="n">GYEC finals: SENSE:ABLE</span><span class="d">Paper · 25</span><span class="t">Business plan for captioning glasses and sign-language wristbands</span><span class="o">Open ↗</span></a>
-            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1XBw5Ijkxc4KKnyZPiEHTlYldbUOeSBqA/view" target="_blank" rel="noopener"><span class="n">GYEC finals pitch</span><span class="d">Video</span><span class="t">The pitch we gave in the final</span><span class="o">Watch ↗</span></a>
-            <a class="r rv" data-reveal href="https://trends.rbc.ru/trends/green/68b5829d9a79477e999d504f" target="_blank" rel="noopener"><span class="n">RBC Trends: ESG education in BRICS</span><span class="d">Press · RU</span><span class="t">Article built on our SPbU-backed study</span><span class="o">Open ↗</span></a>
-            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1turmtR1dt6BtlCsqvqvxV1RJDErv1BNL/view" target="_blank" rel="noopener"><span class="n">Alfa Phygital Hub case solution</span><span class="d">Deck · RU</span><span class="t">Branch concept with site scoring and unit economics</span><span class="o">Open ↗</span></a>
-            <a class="r rv" data-reveal href="https://drive.google.com/file/d/1jknBUwHaD6_J-g0LqHMeMDOcQ4f15LeS/view" target="_blank" rel="noopener"><span class="n">School election results</span><span class="d">Protocol · 25</span><span class="t">171 votes, 37.4%, first of four candidates</span><span class="o">Open ↗</span></a>
-            <div class="r rv" data-reveal><span class="n">RUSAL reference letter</span><span class="d">Letter · 25</span><span class="t">From my internship supervisor, quoted above. Score reports likewise.</span><span class="o mute">On request</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- BLUE ZONE -->
   <section class="blue" id="toolkit" data-tone="blue" aria-labelledby="tk-h">
@@ -1019,7 +1234,7 @@ html.case-open{overflow:hidden}
           <p><a href="mailto:Vladimir.Lishankov@warwick.ac.uk">Open in mail app</a></p>
         </div>
         <div><span class="cap">Based</span><p>University of Warwick, Coventry, UK. Moscow out of term.</p></div>
-        <div><span class="cap">Outside economics</span><p>Texas Hold'em, guitar, literature, and Black Swan theory. Fig. 0 and the cards above are where the first and last ended up.</p></div>
+        <div><span class="cap">Outside economics</span><p>Texas Hold'em, guitar, literature, and Black Swan theory. The playing cards above are where the first one ended up.</p></div>
       </div>
       <footer class="foot"><span>© 2026 Vladimir Lishankov</span><span>Coventry · Moscow</span></footer>
     </div>
@@ -1205,8 +1420,8 @@ html.case-open{overflow:hidden}
 
   /* ---------- reveals ---------- */
   function countUp(el){
-    var to = +el.getAttribute("data-count"), st = performance.now(), dur = 1400;
-    (function f(t){ var p = Math.min(1,(t-st)/dur), v = Math.round(to * (1 - Math.pow(1-p,4))); el.textContent = v.toLocaleString("en-GB"); if (p < 1) requestAnimationFrame(f); })(st);
+    var to = +el.getAttribute("data-count"), dec = +(el.getAttribute("data-dec") || 0), plain = el.hasAttribute("data-plain"), st = performance.now(), dur = 1600;
+    (function f(t){ var p = Math.min(1,(t-st)/dur), v = to * (1 - Math.pow(1-p,4)); el.textContent = dec ? v.toFixed(dec) : (plain ? String(Math.round(v)) : Math.round(v).toLocaleString("en-GB")); if (p < 1) requestAnimationFrame(f); })(st);
   }
   var revealed = function(el){
     el.classList.add("in");
@@ -1229,23 +1444,28 @@ html.case-open{overflow:hidden}
   function ready(){ root.classList.add("ready"); startReveals(); measure(); }
   function finishPre(){
     if (!pre || pre.classList.contains("out")) return;
-    pre.classList.add("out"); setTimeout(ready, 120);
-    setTimeout(function(){ if (pre && pre.parentNode) pre.parentNode.removeChild(pre); }, 1100);
+    pre.classList.add("out"); setTimeout(ready, 520);
+    setTimeout(function(){ if (pre && pre.parentNode) pre.parentNode.removeChild(pre); }, 1600);
   }
   var seen = false; try { seen = sessionStorage.getItem("vl-pre") === "1"; sessionStorage.setItem("vl-pre","1"); } catch(e){}
   if (reduce || seen || location.hash.indexOf("#case-") === 0){
     if (pre) pre.parentNode.removeChild(pre); pre = null; ready();
   } else {
-    var digits = [];
-    for (var d=0; d<3; d++){ var col = document.createElement("span"); col.className = "dg"; var inner = document.createElement("span"); for (var k=0;k<=10;k++){ var b = document.createElement("b"); b.textContent = k % 10; inner.appendChild(b); } col.appendChild(inner); cnt.appendChild(col); digits.push(inner); }
-    var t0 = performance.now(), DUR = 1350, lastV = -1;
+    var word = document.getElementById("preWord"), letters = (word.getAttribute("data-word") || "").split("");
+    word.innerHTML = letters.map(function(c,i){ return '<span class="lt"><span style="transition-delay:' + (i*0.055).toFixed(3) + 's">' + c + '</span></span>'; }).join("");
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ pre.classList.add("go"); }); });
+    var outSpans = word.querySelectorAll(".lt span");
+    var t0 = performance.now() + 250, DUR = 1500, lastV = -1;
     (function step(t){
-      var p = Math.min(1, (t - t0)/DUR), v = Math.round(100 * ease(p));
-      fill.style.transform = "scaleX(" + p.toFixed(3) + ")";
-      if (v !== lastV){ lastV = v; var s = ("00" + v).slice(-3); for (var i=0;i<3;i++) digits[i].style.transform = "translateY(" + (-(+s[i]) ) + "em)"; }
-      if (p < 1) requestAnimationFrame(step); else { pre.classList.add("mark"); setTimeout(finishPre, 520); }
-    })(t0);
-    setTimeout(finishPre, 3600);
+      var p = clamp((t - t0)/DUR, 0, 1), v = Math.round(100 * ease(p));
+      fill.style.transform = "scaleX(" + ease(p).toFixed(3) + ")";
+      if (v !== lastV){ lastV = v; cnt.textContent = ("00" + v).slice(-3); }
+      if (p < 1) requestAnimationFrame(step); else {
+        for (var i=0;i<outSpans.length;i++) outSpans[i].style.transitionDelay = (i*0.035).toFixed(3) + "s";
+        setTimeout(finishPre, 280);
+      }
+    })(performance.now());
+    setTimeout(finishPre, 4200);
     document.getElementById("preSkip").addEventListener("click", finishPre);
     document.addEventListener("keydown", function k(e){ if (e.key === "Escape"){ finishPre(); document.removeEventListener("keydown", k); } });
   }
@@ -1260,8 +1480,34 @@ html.case-open{overflow:hidden}
   }
 
   /* ---------- ribbon ---------- */
-  var ribbon = document.getElementById("ribbonPath"), rLen = 0, who = document.getElementById("about");
-  if (ribbon){ try { rLen = ribbon.getTotalLength(); ribbon.style.strokeDasharray = rLen + " " + rLen; ribbon.style.strokeDashoffset = reduce ? 0 : rLen; } catch(e){} }
+  var ribbon = document.getElementById("ribbonPath"), glow = document.getElementById("ribbonGlow"), rLen = 0, who = document.getElementById("about");
+  var rD0 = ribbon ? ribbon.getAttribute("d") : "", rNums = rD0.match(/-?\d+(\.\d+)?/g) || [], rDraw = reduce ? 1 : 0, rIntro = reduce ? 1 : 0, rIntroT0 = 0;
+  if (ribbon){ try { rLen = ribbon.getTotalLength() * 1.08; ribbon.style.strokeDasharray = rLen + " " + rLen; ribbon.style.strokeDashoffset = reduce ? 0 : rLen; } catch(e){} }
+  if (glow){ glow.setAttribute("d", rD0); glow.style.strokeDasharray = "140 " + (rLen*2); glow.style.strokeDashoffset = "0"; }
+  /* living ribbon: the curve breathes, draws itself in on load, and a highlight runs along it */
+  function ribbonD(t){
+    var k = 0, amp = 16;
+    return rD0.replace(/-?\d+(\.\d+)?/g, function(m){ var v = +m, i = k++, pair = i >> 1, isY = i & 1;
+      if (pair === 0 || pair === (rNums.length >> 1) - 1) return m;
+      var o = isY ? Math.sin(t*0.00075 + pair*0.9)*amp : Math.cos(t*0.0006 + pair*1.3)*amp*0.6;
+      return (v + o).toFixed(1); });
+  }
+  var rVisible = true, rRun = false;
+  function ribbonLoop(t){
+    if (!rVisible){ rRun = false; return; }
+    if (!rIntroT0 && root.classList.contains("ready")) rIntroT0 = t + (document.getElementById("pre") ? 750 : 250);
+    if (rIntroT0) rIntro = clamp((t - rIntroT0)/2600, 0, 1);
+    var d = ribbonD(t); ribbon.setAttribute("d", d);
+    var shown = rLen * rDraw * (1 - Math.pow(1 - rIntro, 3));
+    ribbon.style.strokeDashoffset = (rLen - shown).toFixed(1);
+    if (glow){ glow.setAttribute("d", d); var span = Math.max(0, shown - 160), ph = (t*0.00012) % 1; glow.style.strokeDashoffset = (-(ph*span)).toFixed(1); glow.style.opacity = shown > 300 ? .55 : 0; }
+    requestAnimationFrame(ribbonLoop);
+  }
+  function ribbonStart(){ if (!rRun && ribbon && !reduce){ rRun = true; requestAnimationFrame(ribbonLoop); } }
+  if (ribbon && !reduce){
+    if ("IntersectionObserver" in window){ new IntersectionObserver(function(es){ rVisible = es[0].isIntersecting; if (rVisible) ribbonStart(); }).observe(who); }
+    ribbonStart();
+  }
 
   /* ---------- playing cards ---------- */
   var pin = document.getElementById("tkPin"), deck = document.getElementById("deck"), cards = deck ? Array.prototype.slice.call(deck.querySelectorAll(".pc")) : [];
@@ -1285,8 +1531,43 @@ html.case-open{overflow:hidden}
   /* ---------- scroll engine ---------- */
   var hdr = document.getElementById("hdr"), zones = [], zoneEls = Array.prototype.slice.call(document.querySelectorAll("[data-tone]")), stage = document.getElementById("stage"), gcv = document.getElementById("galton");
   var ghost = document.getElementById("ghost"), ghostLines = ghost ? ghost.querySelectorAll("span") : [], night = document.getElementById("record");
+  /* experience storyline: rail fill, lit nodes, focused entry, sticky year */
+  var xpList = document.getElementById("xpList"), xpItems = xpList ? Array.prototype.slice.call(xpList.querySelectorAll(".xp")) : [], xpFill = document.getElementById("xpFill"), xpBar = document.getElementById("xpBar"), xpYr = document.getElementById("xpYr"), xpIx = document.getElementById("xpIx"), xpTh = document.getElementById("xpTh"), xpCur = -2;
+  function xpUpdate(vh){
+    if (!xpList) return;
+    var r = xpList.getBoundingClientRect(), line = vh*0.5, p = clamp((line - r.top)/Math.max(1, r.height - 60), 0, 1);
+    if (xpFill) xpFill.style.transform = "scaleY(" + p.toFixed(4) + ")";
+    if (xpBar) xpBar.style.transform = "scaleX(" + p.toFixed(4) + ")";
+    xpList.classList.toggle("spy", r.top < line && r.bottom > line);
+    var k = -1; for (var i=0;i<xpItems.length;i++) if (xpItems[i].getBoundingClientRect().top < line) k = i;
+    if (k === xpCur) return; xpCur = k;
+    xpItems.forEach(function(it,i){ it.classList.toggle("on", i <= k); it.classList.toggle("cur", i === k); });
+    var it = xpItems[Math.max(0,k)]; if (!it) return;
+    var yr = it.getAttribute("data-yr");
+    if (xpYr && xpYr.textContent !== yr){ xpYr.textContent = yr; xpYr.classList.remove("flip"); void xpYr.offsetWidth; xpYr.classList.add("flip"); }
+    if (xpIx) xpIx.textContent = ("0" + (Math.max(0,k)+1)).slice(-2);
+    if (xpTh){ xpTh.removeAttribute("data-final"); xpTh.textContent = it.getAttribute("data-th"); if (window.__scramble && !reduce) window.__scramble(xpTh); }
+  }
+  /* nav scroll-spy with a sliding pill */
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll(".nav a[data-spy]")), navInd = document.getElementById("navInd"), spyTops = [], spyOn = -2;
+  function spyMeasure(y){ spyTops = navLinks.map(function(a){ var t = document.getElementById(a.getAttribute("data-spy")); return t ? t.getBoundingClientRect().top + y : 1e9; }); spyOn = -2; }
+  function spy(y, vh){
+    if (!navLinks.length) return;
+    var k = -1, line = y + vh*0.38;
+    for (var i=0;i<spyTops.length;i++) if (spyTops[i] <= line) k = i;
+    if (y + vh >= document.documentElement.scrollHeight - 4) k = navLinks.length - 1;
+    if (k === spyOn) return; spyOn = k;
+    navLinks.forEach(function(a,i){ a.classList.toggle("on", i === k); if (i === k) a.setAttribute("aria-current","true"); else a.removeAttribute("aria-current"); });
+    placeInd();
+  }
+  function placeInd(){
+    if (!navInd) return; var a = navLinks[spyOn];
+    if (!a || !a.offsetWidth){ navInd.classList.remove("on"); return; }
+    navInd.style.width = a.offsetWidth + "px"; navInd.style.transform = "translateX(" + a.offsetLeft + "px)"; navInd.classList.add("on");
+    var nv = a.parentNode; if (nv.scrollWidth > nv.clientWidth + 2){ var tx = a.offsetLeft - (nv.clientWidth - a.offsetWidth)/2; try { nv.scrollTo({ left: Math.max(0, tx), behavior: reduce ? "auto" : "smooth" }); } catch(e){ nv.scrollLeft = tx; } }
+  }
   function measure(){
-    var y = window.scrollY;
+    var y = window.scrollY; spyMeasure(y);
     zones = Array.prototype.map.call(document.querySelectorAll("[data-tone]"), function(z){ var r = z.getBoundingClientRect(); return { top:r.top + y + window.innerHeight*0.26, bottom:r.bottom + y, tone:z.getAttribute("data-tone") }; });
     onScroll();
   }
@@ -1296,13 +1577,15 @@ html.case-open{overflow:hidden}
     var y = window.scrollY, vh = window.innerHeight;
     hdr.classList.toggle("scrolled", y > 30);
     var tone = "light";
-    for (var i=0;i<zoneEls.length;i++){ var zr = zoneEls[i].getBoundingClientRect(); if (zr.top <= 40 && zr.bottom > 40){ var inBand = zr.top + vh*0.2 > 40, prev = zoneEls[i-1], adj = prev && Math.abs(prev.getBoundingClientRect().bottom - zr.top) < 4; tone = inBand ? (adj ? prev.getAttribute("data-tone") : "light") : zoneEls[i].getAttribute("data-tone"); } }
+    for (var i=0;i<zoneEls.length;i++){ var zr = zoneEls[i].getBoundingClientRect(), zb = zr.bottom - (zoneEls[i].hasAttribute("data-fade") ? vh*0.2 : 0); if (zr.top <= 40 && zb > 40){ var inBand = zr.top + vh*0.2 > 40, prev = zoneEls[i-1], adj = prev && Math.abs(prev.getBoundingClientRect().bottom - zr.top) < 4; tone = inBand ? (adj ? prev.getAttribute("data-tone") : "light") : zoneEls[i].getAttribute("data-tone"); } }
     if (hdr.getAttribute("data-tone") !== tone) hdr.setAttribute("data-tone", tone);
+    spy(y, vh);
+    xpUpdate(vh);
     if (reduce) return;
     if (gcv && y < vh*1.2) gcv.style.transform = "translate3d(0," + (y*0.22).toFixed(1) + "px,0)";
     if (ribbon && who){
       var r = who.getBoundingClientRect(), p = clamp((vh*0.9 - r.top)/(r.height*0.95), 0, 1);
-      ribbon.style.strokeDashoffset = (rLen*(1 - ease(p))).toFixed(1);
+      rDraw = Math.max(0.62, ease(p)); if (!rRun) ribbon.style.strokeDashoffset = (rLen*(1 - rDraw)).toFixed(1);
     }
     if (qWords.length){
       var qr = qEl.getBoundingClientRect(), qp = clamp((vh*0.82 - qr.top)/(qr.height + vh*0.25), 0, 1), on = Math.round(qp * qWords.length);
@@ -1331,11 +1614,45 @@ html.case-open{overflow:hidden}
   if (pill && window.matchMedia("(pointer: fine)").matches && !reduce){
     var tx = 0, ty = 0, cx = 0, cy = 0, active = false;
     document.querySelectorAll(".card .media").forEach(function(m){
-      m.addEventListener("mouseenter", function(){ active = true; pill.classList.add("on"); });
-      m.addEventListener("mouseleave", function(){ active = false; pill.classList.remove("on"); });
+      m.addEventListener("mouseenter", function(){ active = true; pill.classList.add("on"); root.classList.add("cur-card"); });
+      m.addEventListener("mouseleave", function(){ active = false; pill.classList.remove("on"); root.classList.remove("cur-card"); });
     });
     document.addEventListener("mousemove", function(e){ tx = e.clientX; ty = e.clientY; if (!active){ cx = tx; cy = ty; } });
     (function loop(){ cx += (tx - cx)*0.18; cy += (ty - cy)*0.18; pill.style.transform = "translate(" + cx.toFixed(1) + "px," + cy.toFixed(1) + "px) translate(-50%,-50%) scale(" + (active ? 1 : .6) + ")"; requestAnimationFrame(loop); })();
+  }
+
+  /* ---------- cursor: dot, lagging ring, soft glow, magnetic pills ---------- */
+  if (window.matchMedia("(pointer: fine)").matches && !reduce){
+    var cDot = document.createElement("i"), cRing = document.createElement("i"), cGlow = document.createElement("i");
+    cDot.className = "cur-dot"; cRing.className = "cur-ring"; cGlow.className = "cur-glow";
+    document.body.appendChild(cDot); document.body.appendChild(cRing); document.body.insertBefore(cGlow, document.body.firstChild);
+    var mx = innerWidth/2, my = innerHeight/2, rx = mx, ry = my, gx = mx, gy = my, seenMouse = false;
+    root.classList.add("cur-out");
+    document.addEventListener("mousemove", function(e){
+      mx = e.clientX; my = e.clientY;
+      if (!seenMouse){ seenMouse = true; rx = gx = mx; ry = gy = my; root.classList.add("has-cur"); }
+      root.classList.remove("cur-out");
+    }, { passive:true });
+    document.addEventListener("mouseleave", function(){ root.classList.add("cur-out"); });
+    document.addEventListener("mousedown", function(){ root.classList.add("cur-down"); });
+    document.addEventListener("mouseup", function(){ root.classList.remove("cur-down"); });
+    var HOV = "a,button,label,select,summary,[data-case],.chip,.pl", TXT = "input[type=text],input[type=email],textarea";
+    document.addEventListener("mouseover", function(e){
+      var t = e.target; if (!t.closest) return;
+      root.classList.toggle("cur-hover", !!t.closest(HOV) && !t.closest(".card .media"));
+      root.classList.toggle("cur-text", !!t.closest(TXT));
+    });
+    (function cl(){
+      rx += (mx - rx)*0.2; ry += (my - ry)*0.2; gx += (mx - gx)*0.07; gy += (my - gy)*0.07;
+      cDot.style.transform = "translate3d(" + mx + "px," + my + "px,0)";
+      cRing.style.transform = "translate3d(" + rx.toFixed(1) + "px," + ry.toFixed(1) + "px,0)";
+      cGlow.style.transform = "translate3d(" + gx.toFixed(1) + "px," + gy.toFixed(1) + "px,0)";
+      requestAnimationFrame(cl);
+    })();
+    document.querySelectorAll(".pill,.xp-go,.fund-link").forEach(function(b){
+      b.addEventListener("mousemove", function(e){ var r = b.getBoundingClientRect(), dx = e.clientX - (r.left + r.width/2), dy = e.clientY - (r.top + r.height/2); b.style.transform = "translate(" + (dx*0.22).toFixed(1) + "px," + (dy*0.3).toFixed(1) + "px)"; });
+      b.addEventListener("mouseleave", function(){ b.style.transform = ""; });
+    });
   }
 
   /* ---------- card art ---------- */
@@ -1443,8 +1760,7 @@ var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches, root
   /* ================= CASE STUDIES ================= */
   var EV = {
     rbc: "https://trends.rbc.ru/trends/green/68b5829d9a79477e999d504f",
-    rbcPdf: "https://drive.google.com/file/d/1tfijMLSIlvBtgqXYecJu_5Fo9Nwap1Mf/view",
-    alfa: "https://drive.google.com/file/d/1turmtR1dt6BtlCsqvqvxV1RJDErv1BNL/view"
+    rbcPdf: "https://drive.google.com/file/d/1tfijMLSIlvBtgqXYecJu_5Fo9Nwap1Mf/view"
   };
   var SIG = '<svg viewBox="64 190 790 290" aria-hidden="true"><g class="sig">' +
     '<path class="s1" pathLength="1" stroke-width="22" d="M478 210 C332 204 143 232 94 278 C67 304 78 324 150 333 C239 347 420 337 567 340 C690 343 821 310 820 274 C817 231 646 207 478 210"/>' +
@@ -1626,35 +1942,6 @@ var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches, root
           '<p class="c-take">If you can\'t measure it across borders, you can\'t copy what works.</p>']
       ],
       init:function(){ bricsViz(document.getElementById("viz-brics")); }
-    },
-    {
-      id:"alfa", name:"Alfa Phygital Hub",
-      kick:"Case competition · team of 4 · Alfa-Bank brief",
-      title:"Alfa Phygital Hub",
-      lede:"The brief: reinvent the bank branch. Our answer was a hub where students, new founders and established clients learn, pitch and bank in one place, with sites chosen by formula.",
-      meta:[["Role","Team member, The Higher School of Hustle"],["When","2025"],["Brief","Alfa-Bank, phygital offices 2.0"],["Methods","Customer development, CJM, weighted scoring, unit economics"],["Output","Case deck (RU)"]],
-      nums:[["7","location factors"],["88","top site score"],["37.8%","projected IRR"],["28 mo","payback"]],
-      chapters:[
-        ["context","Context","Branches that earn their rent",
-          '<p>Alfa-Bank asked for "phygital offices 2.0": physical space and digital product tied more tightly together. We framed the opportunity around trust and lifetime value with younger clients.</p>' +
-          '<p class="dim">Two numbers set the tone in our deck: 84% of customers say they would switch bank for timely advice (Personetics, 2025), and 71% expect personalised interactions (McKinsey, 2023).</p>'],
-        ["concept","Concept","One hub, three journeys",
-          steps([
-            ["Three segments","A student, a first-time entrepreneur and an established partner, each with a journey from first contact through onboarding, retention and referral."],
-            ["Four zones","An academy, a collaboration and pitch zone, a technology library, and a lounge."],
-            ["The app as the hub\'s twin","Gamification, an AI assistant, a compatibility matrix for finding co-founders, and a knowledge base of business templates."]
-          ])],
-        ["sites","Site selection","Where to open first",
-          '<p>We scored Moscow districts on seven weighted criteria, with the weighting method adapted from BCG. Bauman University scored 88/100 and Artplay 85/100.</p>' +
-          '<div class="viz" id="viz-alfa"></div>'],
-        ["numbers","Numbers","Unit economics",
-          '<p>We costed the launch campaign and modelled 36 months of new clients and revenue.</p>' +
-          '<div class="ue"><div><b>≈ RUB 85</b><span>customer acquisition cost, targeted ads</span></div><div><b>RUB 6m</b><span>NPV</span></div><div><b>37.8%</b><span>IRR</span></div><div><b>8 mo</b><span>break-even</span></div><div><b>28 mo</b><span>payback</span></div><div><b>36 mo</b><span>model horizon</span></div></div>' +
-          '<div class="c-ev" style="margin-top:20px">' + ev(EV.alfa, "Full case deck (RU)") + '</div>'],
-        ["take","Why it matters","Arguments become formulas",
-          '<p class="c-take">Put a location debate into a formula and the argument moves to the weights, where it belongs.</p>']
-      ],
-      init:function(){ alfaViz(document.getElementById("viz-alfa")); }
     }
   ];
 
@@ -1766,13 +2053,6 @@ var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches, root
     paint();
   }
 
-  function alfaViz(el){
-    if (!el) return;
-    var W = [["A","Density of target audience",25],["B","Start-up and IT ecosystem",20],["C","White space, no rival hubs",15],["D","Footfall and access",15],["E","Cost of space",10],["F","Community activity",10],["G","Infrastructure",5]];
-    el.innerHTML = '<div class="vt"><h3>The scoring formula</h3><span class="cap">S = Σ wᵢ · scoreᵢ</span></div><div class="wts">' +
-      W.map(function(w){ return '<div><span>' + w[0] + ' · ' + w[1] + '</span><i style="width:' + (w[2]/25*100) + '%"></i><b>' + w[2] + '%</b></div>'; }).join("") + '</div>' +
-      '<div class="readout"><div><b>88</b><span>Bauman University area: 22k students, white space</span></div><div><b>85</b><span>Artplay: 4–6k visitors, next to HSE</span></div></div>';
-  }
 
   /* ---------- overlay controller ---------- */
   var caseEl = document.getElementById("case"), body = document.getElementById("caseBody"), prog = document.getElementById("caseProg");
