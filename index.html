@@ -552,6 +552,8 @@ html.cur-text .cur-ring{width:4px;height:30px;margin:-15px 0 0 -2px;border-radiu
 html.cur-card .cur-ring,html.cur-card .cur-dot,html.cur-out .cur-ring,html.cur-out .cur-dot{opacity:0}
 .cur-glow{position:fixed;left:0;top:0;z-index:0;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,color-mix(in srgb,var(--accent) 16%,transparent) 0,transparent 62%);opacity:.0;transition:opacity .6s;will-change:transform}
 html.has-cur .cur-glow{opacity:1}
+.mail-k{display:block;margin:14px 0 0;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+.mail-k + .mail{margin-top:6px}
 
 
 /* ---------- case overlay ---------- */
@@ -1230,8 +1232,11 @@ html.case-open{overflow:hidden}
       <h2 id="cta-h"><span class="ml" data-reveal><span>Let's put a</span></span><span class="ml" data-reveal><span><span class="acc">number</span> on it.</span></span></h2>
       <div class="grid">
         <div><span class="cap">Email</span>
-          <div class="mail"><code id="email">Vladimir.Lishankov@warwick.ac.uk</code><button class="pill" id="copyBtn" type="button">Copy</button></div>
-          <p><a href="mailto:Vladimir.Lishankov@warwick.ac.uk">Open in mail app</a></p>
+          <span class="mail-k">University</span>
+          <div class="mail"><code id="email">Vladimir.Lishankov@warwick.ac.uk</code><button class="pill copy" data-copy="email" type="button">Copy</button></div>
+          <span class="mail-k">Personal</span>
+          <div class="mail"><code id="email2">lishankovladimir@gmail.com</code><button class="pill copy" data-copy="email2" type="button">Copy</button></div>
+          <p><a href="mailto:Vladimir.Lishankov@warwick.ac.uk?cc=lishankovladimir@gmail.com">Open in mail app</a></p>
         </div>
         <div><span class="cap">Based</span><p>University of Warwick, Coventry, UK. Moscow out of term.</p></div>
         <div><span class="cap">Outside economics</span><p>Texas Hold'em, guitar, literature, and Black Swan theory. The playing cards above are where the first one ended up.</p></div>
@@ -1432,7 +1437,12 @@ html.case-open{overflow:hidden}
     }
   };
   if ("IntersectionObserver" in window && !reduce){
-    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if (e.isIntersecting){ revealed(e.target); io.unobserve(e.target); } }); }, { threshold:0.14, rootMargin:"0px 0px -6% 0px" });
+    /* reveals replay every time an element comes back into view, in both scroll directions */
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){
+      var el = e.target;
+      if (e.isIntersecting && e.intersectionRatio >= 0.12){ if (!el.classList.contains("in") || el.__out){ el.__out = false; revealed(el); } }
+      else if (!e.isIntersecting){ el.__out = true; if (!el.hasAttribute("data-keep")) el.classList.remove("in"); }
+    }); }, { threshold:[0, 0.12, 0.3], rootMargin:"0px 0px -6% 0px" });
     var startReveals = function(){ document.querySelectorAll("[data-reveal],[data-scramble]").forEach(function(el){ if (!el.closest("[data-reveal]") || el.hasAttribute("data-reveal")) io.observe(el); }); };
   } else {
     document.querySelectorAll("[data-reveal]").forEach(function(el){ el.classList.add("in"); });
@@ -1617,6 +1627,7 @@ html.case-open{overflow:hidden}
       m.addEventListener("mouseenter", function(){ active = true; pill.classList.add("on"); root.classList.add("cur-card"); });
       m.addEventListener("mouseleave", function(){ active = false; pill.classList.remove("on"); root.classList.remove("cur-card"); });
     });
+    setInterval(function(){ if (typeof window.__curActive === "boolean") active = window.__curActive; }, 100);
     document.addEventListener("mousemove", function(e){ tx = e.clientX; ty = e.clientY; if (!active){ cx = tx; cy = ty; } });
     (function loop(){ cx += (tx - cx)*0.18; cy += (ty - cy)*0.18; pill.style.transform = "translate(" + cx.toFixed(1) + "px," + cy.toFixed(1) + "px) translate(-50%,-50%) scale(" + (active ? 1 : .6) + ")"; requestAnimationFrame(loop); })();
   }
@@ -1636,17 +1647,27 @@ html.case-open{overflow:hidden}
     document.addEventListener("mouseleave", function(){ root.classList.add("cur-out"); });
     document.addEventListener("mousedown", function(){ root.classList.add("cur-down"); });
     document.addEventListener("mouseup", function(){ root.classList.remove("cur-down"); });
-    var HOV = "a,button,label,select,summary,[data-case],.chip,.pl", TXT = "input[type=text],input[type=email],textarea";
-    document.addEventListener("mouseover", function(e){
-      var t = e.target; if (!t.closest) return;
-      root.classList.toggle("cur-hover", !!t.closest(HOV) && !t.closest(".card .media"));
-      root.classList.toggle("cur-text", !!t.closest(TXT));
-    });
+    var HOV = "a,button,label,select,summary,[data-case],.chip,.pl,input[type=range]", TXT = "input[type=text],input[type=email],textarea";
+    var lastProbe = 0;
+    function probe(){
+      var t = document.elementFromPoint(mx, my);
+      var overCard = !!(t && t.closest && t.closest(".card .media")) && !root.classList.contains("case-open");
+      root.classList.toggle("cur-hover", !!(t && t.closest && t.closest(HOV)) && !overCard);
+      root.classList.toggle("cur-text", !!(t && t.closest && t.closest(TXT)));
+      root.classList.toggle("cur-card", overCard);
+      if (pill){ pill.classList.toggle("on", overCard); }
+      window.__curActive = overCard;
+    }
+    window.__curProbe = probe;
+    document.addEventListener("mouseover", probe);
+    window.addEventListener("scroll", function(){ lastProbe = 0; }, { passive:true });
+    document.addEventListener("scroll", function(){ lastProbe = 0; }, { passive:true, capture:true });
     (function cl(){
       rx += (mx - rx)*0.2; ry += (my - ry)*0.2; gx += (mx - gx)*0.07; gy += (my - gy)*0.07;
       cDot.style.transform = "translate3d(" + mx + "px," + my + "px,0)";
       cRing.style.transform = "translate3d(" + rx.toFixed(1) + "px," + ry.toFixed(1) + "px,0)";
       cGlow.style.transform = "translate3d(" + gx.toFixed(1) + "px," + gy.toFixed(1) + "px,0)";
+      var now = performance.now(); if (seenMouse && now - lastProbe > 120){ lastProbe = now; probe(); }
       requestAnimationFrame(cl);
     })();
     document.querySelectorAll(".pill,.xp-go,.fund-link").forEach(function(b){
@@ -2147,11 +2168,11 @@ var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches, root
   if ((location.hash || "").indexOf("#case-") === 0) openCase(location.hash.slice(6), false);
 
 })();
-(function(){ var cb = document.getElementById("copyBtn"), em = document.getElementById("email"); if (!cb) return;
+(function(){ document.querySelectorAll("button.copy[data-copy]").forEach(function(cb){ var em = document.getElementById(cb.getAttribute("data-copy")); if (!em) return;
   cb.addEventListener("click", function(){
     function fb(){ var sel = window.getSelection(), rg = document.createRange(); rg.selectNodeContents(em); sel.removeAllRanges(); sel.addRange(rg); cb.textContent = "Selected"; }
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(em.textContent).then(function(){ cb.textContent = "Copied"; setTimeout(function(){ cb.textContent = "Copy"; }, 1800); }, fb); else fb();
-  }); })();
+  }); }); })();
 if (window.__applyTheme) window.__applyTheme();
 </script>
 </body>
